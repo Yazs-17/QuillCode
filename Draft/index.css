@@ -1,0 +1,136 @@
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			display: grid;
+			grid-template-rows: auto 1fr auto;
+			height: 100vh;
+			font-family: "Segoe UI", sans-serif;
+			background: #f4f4f4;
+		}
+
+		header,
+		footer {
+			background: #222;
+			color: white;
+			text-align: center;
+			padding: 10px;
+		}
+
+		main {
+			display: grid;
+			grid-template-columns: auto 2fr 3fr;
+			gap: 10px;
+			padding: 10px;
+			transition: grid-template-columns 0.3s ease;
+		}
+
+		/* ========== 左侧 文件管理栏 ========== */
+		.file-manager {
+			background: #2f3640;
+			color: white;
+			width: 200px;
+			border-radius: 8px;
+			padding: 10px;
+			display: flex;
+			flex-direction: column;
+			transition: width 0.3s ease;
+			overflow: hidden;
+		}
+
+		.file-manager.hidden {
+			width: 0;
+			padding: 0;
+			border: none;
+		}
+
+		.file-manager h3 {
+			font-size: 16px;
+			margin-bottom: 10px;
+			text-align: center;
+		}
+
+		.file-manager ul {
+			list-style: none;
+		}
+
+		.file-manager li {
+			padding: 6px 10px;
+			cursor: pointer;
+			border-radius: 4px;
+		}
+
+		.file-manager li:hover {
+			background: rgba(255, 255, 255, 0.1);
+		}
+
+		/* 文件管理栏折叠按钮 */
+		.toggle-btn {
+			position: absolute;
+			top: 70px;
+			left: 210px;
+			background: #4facfe;
+			color: white;
+			border: none;
+			padding: 5px 10px;
+			border-radius: 0 6px 6px 0;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			z-index: 100;
+		}
+
+		.hidden+.toggle-btn {
+			left: 10px;
+		}
+
+		/* ========== 文章区 ========== */
+		.article {
+			background: white;
+			border-radius: 8px;
+			padding: 15px;
+			overflow-y: auto;
+		}
+
+		/* ========== 右侧工作区 ========== */
+		.workspace {
+			display: grid;
+			grid-template-rows: 1fr 1fr;
+			gap: 10px;
+		}
+
+		.code-editor,
+		.preview {
+			background: white;
+			border-radius: 8px;
+			padding: 10px;
+			overflow: auto;
+			box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.code-editor {
+			background: #1e1e1e;
+			color: #dcdcdc;
+			font-family: monospace;
+		}
+
+		/* 悬浮 “AI带你读” */
+		.ai-helper {
+			position: fixed;
+			top: 120px;
+			left: 25px;
+			background: linear-gradient(45deg, #4facfe, #00f2fe);
+			color: white;
+			padding: 10px 15px;
+			border-radius: 12px;
+			font-weight: bold;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+			cursor: pointer;
+			transition: transform 0.2s, opacity 0.3s;
+		}
+
+		.ai-helper:hover {
+			transform: scale(1.05);
+		}

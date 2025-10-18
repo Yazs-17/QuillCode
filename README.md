@@ -8,6 +8,9 @@ As the description, this project is used for making mini tutorials with interact
 
 - [ ] 实现实时预览指定文件夹下的markdown files
 - [ ] markdown 上传，文件展示与懒加载
+- [ ] 用Vue pinia 同步“当前文件名、内容、保存状态”
+- [ ] 单体 JWT ，保存唯一状态
+- [ ] 文章Vim式 快捷在线编辑
 
 
 
