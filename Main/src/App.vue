@@ -102,7 +102,7 @@ button {
 footer,
 header {
 	width: 100vw;
-	/* background-color: var(--hui); */
+
 	border: 1px var(--hui) solid;
 	display: flex;
 	align-items: center;
@@ -111,7 +111,7 @@ header {
 }
 
 header .header-actions {
-	/* border: 1px black solid; */
+
 	display: flex;
 	width: 100vw;
 	padding: 0 1rem;
@@ -119,12 +119,12 @@ header .header-actions {
 
 header .header-actions button {
 	margin: 0 0.5rem;
-	/* color: red; */
+
 }
 
-/* 文件管理器 */
+
 .file-manager {
-	/* background-color: var(--danhui); */
+
 	border: 1px solid var(--hui);
 	padding: 1rem;
 }
@@ -152,15 +152,15 @@ textarea:hover {
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 }
 
-/* 文章预览区 */
+
 .article {
-	/* background: #fff; */
+
 	border: 1px solid var(--hui);
 	padding: 1rem;
 	overflow-y: auto;
 }
 
-/* 代码编辑与实时渲染区 */
+
 .workspace {
 	display: grid;
 	grid-template-rows: 1fr 1fr;
