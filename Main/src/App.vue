@@ -2,61 +2,76 @@
 </script>
 
 <template>
-	<!-- <div></div> -->
-	<div class="layout toolbar">
-		<header>
-			<span>QuillCode Space</span>
-			<span class="header-actions">
-				<button>新建文章</button>
-				<button>保存</button>
-			</span>
-		</header>
-
-
-		<main class="container">
-			<aside class="file-manager">
-				<h3>📂 文件管理</h3>
-				<ul>
-					<li>chapter1.md</li>
-					<li>chapter2.md</li>
-					<li>右键管理.md</li>
-				</ul>
-			</aside>
-
-			<article class="article">
-				<h2>chapter1.md</h2>
-				<p>1. 直接渲染后端传过来的markdown</p>
-				<p>文件管理栏可以折叠，以便给文章和代码更多空间。</p>
-				<p>这个布局结构常用于在线编程学习平台、文档编辑器、AI实验室等。</p>
-				<div class="toolbar">
-					<button>编辑</button>
+	<div class="outer">
+		<div class="layout">
+			<header>
+				<span>QuillCode Space</span>
+				<span class="header-actions">
+					<button>新建文章</button>
 					<button>保存</button>
-				</div>
-			</article>
+				</span>
+			</header>
 
-			<section class="workspace">
-				<textarea class="code-editor">
-					<pre>
-						
-					</pre>
-				</textarea>
+			<main class="container">
+				<aside class="file-manager">
+					<h3>📂 文件管理</h3>
+					<ul>
+						<li>chapter1.md</li>
+						<li>chapter2.md</li>
+						<li>右键管理.md</li>
+					</ul>
+				</aside>
 
-				<div class="preview">
-					<div>
-						<h1>Hello World</h1>
-						<p>我是一段实时渲染的内容~</p>
+				<article class="article">
+					<h2>chapter1.md</h2>
+					<p>1. 直接渲染后端传过来的markdown</p>
+					<p>文件管理栏可以折叠，以便给文章和代码更多空间。</p>
+					<p>这个布局结构常用于在线编程学习平台、文档编辑器、AI实验室等。</p>
+					<div class="toolbar">
+						<button>编辑</button>
+						<button>保存</button>
 					</div>
-				</div>
-			</section>
-		</main>
+				</article>
 
-		<footer>© 2025 Yazs Lab. All Rights Reserved.</footer>
+				<section class="workspace">
+					<textarea class="code-editor"></textarea>
+					<div class="preview">
+						<div>
+							<h1>Hello World</h1>
+							<p>我是一段实时渲染的内容~</p>
+						</div>
+					</div>
+				</section>
+			</main>
+
+			<footer>© 2025 Yazs Lab. All Rights Reserved.</footer>
+		</div>
 	</div>
-	<!-- <div class="ai-helper">🤖 AI带你读</div> -->
-
 </template>
 
 <style scoped>
+:global(html),
+:global(body),
+:global(#app) {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f7f7f7;
+}
+
+.outer {
+	width: 99vw;
+	height: 99vh;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+}
+
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -71,24 +86,21 @@ button {
 	cursor: pointer;
 }
 
-.toolbar {
+
+.article .toolbar {
 	display: flex;
 	gap: 8px;
 	margin-top: 0.5rem;
-
 	padding-top: 0.5rem;
 	justify-content: flex-end;
-}
-
-.article .toolbar {
 	border-top: 1px solid var(--hui);
 }
 
 .layout {
 	display: grid;
 	grid-template-rows: 10vh 1fr 10vh;
-	height: 100vh;
-	width: 100vw;
+	height: 100%;
+	width: 100%;
 }
 
 .container {
@@ -101,8 +113,7 @@ button {
 
 footer,
 header {
-	width: 100vw;
-
+	width: 100%;
 	border: 1px var(--hui) solid;
 	display: flex;
 	align-items: center;
@@ -111,20 +122,16 @@ header {
 }
 
 header .header-actions {
-
 	display: flex;
-	width: 100vw;
+	width: 100%;
 	padding: 0 1rem;
 }
 
 header .header-actions button {
 	margin: 0 0.5rem;
-
 }
 
-
 .file-manager {
-
 	border: 1px solid var(--hui);
 	padding: 1rem;
 }
@@ -152,14 +159,11 @@ textarea:hover {
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 }
 
-
 .article {
-
 	border: 1px solid var(--hui);
 	padding: 1rem;
 	overflow-y: auto;
 }
-
 
 .workspace {
 	display: grid;
