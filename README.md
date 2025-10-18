@@ -1,3 +1,5 @@
+[TOC]
+
 ## General Introduction
 
 As the description, this project is used for making mini tutorials with interactive functions, and I'd like to use my own toolkit to make it!
@@ -17,7 +19,7 @@ As the description, this project is used for making mini tutorials with interact
 
 ## Some Tools
 
-Vue  ? （or origin html & css & js)  & java springboot (or go gin)
+Vue  ? （or origin html & css & js)  & java springboot (H5 , mongodb or mysql)(or go gin or express) & minidatabase(sqlite and so on )
 
 ## Start
 
@@ -29,3 +31,13 @@ Vue  ? （or origin html & css & js)  & java springboot (or go gin)
 
 ## the last
 
+
+## if you ?
+
+如果你想用原生手写，你只需要做到：
+1. 引入 marked.js/showdown.js & highlight.js -> 原因不言而喻
+2. 手写iframe通信机制（postMessage） -> 安全的代码与运行沙箱
+3. 数据响应更新系统（reactivity system） -> 自动更新预览
+4. 模块化组件（`<template>` & JS 动态clone & Web Components） -> 不言而喻
+5. 状态管理 （event bus/observer）-> 不言而喻
+6. 强大的组织能力和赤石精神
