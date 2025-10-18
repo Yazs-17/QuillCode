@@ -1,47 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 
 <head>
-	<meta charset="utf-8">
-	<title>CodeMemo</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>交互式学习平台布局 Demo</title>
 	<style>
-		body {
-			display: flex;
-			height: 100vh;
+		* {
+			box-sizing: border-box;
 			margin: 0;
+			padding: 0;
 		}
 
-		textarea {
-			width: 50%;
+		body {
+			display: grid;
+			grid-template-rows: auto 1fr auto;
+			height: 100vh;
+			font-family: "Segoe UI", sans-serif;
+			background: #f4f4f4;
+		}
+
+		header,
+		footer {
+			background: #222;
+			color: white;
+			text-align: center;
 			padding: 10px;
-			font-family: monospace;
-			resize: none;
 		}
 
-		iframe {
-			width: 50%;
+		main {
+			display: grid;
+			grid-template-columns: auto 2fr 3fr;
+			gap: 10px;
+			padding: 10px;
+			transition: grid-template-columns 0.3s ease;
+		}
+
+		/* ========== 左侧 文件管理栏 ========== */
+		.file-manager {
+			background: #2f3640;
+			color: white;
+			width: 200px;
+			border-radius: 8px;
+			padding: 10px;
+			display: flex;
+			flex-direction: column;
+			transition: width 0.3s ease;
+			overflow: hidden;
+		}
+
+		.file-manager.hidden {
+			width: 0;
+			padding: 0;
 			border: none;
+		}
+
+		.file-manager h3 {
+			font-size: 16px;
+			margin-bottom: 10px;
+			text-align: center;
+		}
+
+		.file-manager ul {
+			list-style: none;
+		}
+
+		.file-manager li {
+			padding: 6px 10px;
+			cursor: pointer;
+			border-radius: 4px;
+		}
+
+		.file-manager li:hover {
+			background: rgba(255, 255, 255, 0.1);
+		}
+
+		/* 文件管理栏折叠按钮 */
+		.toggle-btn {
+			position: absolute;
+			top: 70px;
+			left: 210px;
+			background: #4facfe;
+			color: white;
+			border: none;
+			padding: 5px 10px;
+			border-radius: 0 6px 6px 0;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			z-index: 100;
+		}
+
+		.hidden+.toggle-btn {
+			left: 10px;
+		}
+
+		/* ========== 文章区 ========== */
+		.article {
+			background: white;
+			border-radius: 8px;
+			padding: 15px;
+			overflow-y: auto;
+		}
+
+		/* ========== 右侧工作区 ========== */
+		.workspace {
+			display: grid;
+			grid-template-rows: 1fr 1fr;
+			gap: 10px;
+		}
+
+		.code-editor,
+		.preview {
+			background: white;
+			border-radius: 8px;
+			padding: 10px;
+			overflow: auto;
+			box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.code-editor {
+			background: #1e1e1e;
+			color: #dcdcdc;
+			font-family: monospace;
+		}
+
+		/* 悬浮 “AI带你读” */
+		.ai-helper {
+			position: fixed;
+			top: 120px;
+			left: 25px;
+			background: linear-gradient(45deg, #4facfe, #00f2fe);
+			color: white;
+			padding: 10px 15px;
+			border-radius: 12px;
+			font-weight: bold;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+			cursor: pointer;
+			transition: transform 0.2s, opacity 0.3s;
+		}
+
+		.ai-helper:hover {
+			transform: scale(1.05);
 		}
 	</style>
 </head>
 
 <body>
-	<textarea id="editor"><h1>Hello World</h1></textarea>
-	<iframe id="preview"></iframe>
+	<header>🌟 我的交互式学习空间</header>
+
+	<main>
+		<aside class="file-manager" id="fileManager">
+			<h3>📂 文件管理</h3>
+			<ul>
+				<li>chapter1.md</li>
+				<li>chapter2.md</li>
+				<li>demo1.html</li>
+				<li>style.css</li>
+			</ul>
+		</aside>
+		<button class="toggle-btn" id="toggleBtn">隐藏</button>
+
+		<article class="article">
+			<h2>📘 文章内容区</h2>
+			<p>这里是文章讲解部分，比如对算法、组件或代码逻辑的详细描述。</p>
+			<p>文件管理栏可以折叠，以便给文章和代码更多空间。</p>
+			<p>这个布局结构常用于在线编程学习平台、文档编辑器、AI实验室等。</p>
+		</article>
+
+		<section class="workspace">
+			<div class="code-editor">
+				<h3>🧑‍💻 代码编辑区</h3>
+				<pre>
+&lt;h1&gt;Hello World&lt;/h1&gt;
+&lt;p&gt;我是一段实时渲染的内容~&lt;/p&gt;
+        </pre>
+			</div>
+
+			<div class="preview">
+				<h3>✨ 实时渲染区</h3>
+				<div>
+					<h1>Hello World</h1>
+					<p>我是一段实时渲染的内容~</p>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer>© 2025 Yazs Lab. All Rights Reserved.</footer>
+
+	<div class="ai-helper">🤖 AI带你读</div>
 
 	<script>
-		const editor = document.getElementById('editor');
-		const preview = document.getElementById('preview');
+		const fileManager = document.getElementById('fileManager');
+		const toggleBtn = document.getElementById('toggleBtn');
 
-		const update = () => {
-			const code = editor.value;
-			preview.srcdoc = code; // 动态加载 HTML
-			localStorage.setItem('codeMemo', code);
-		}
-
-		editor.addEventListener('input', update);
-		editor.value = localStorage.getItem('codeMemo') || editor.value;
-		update();
+		toggleBtn.addEventListener('click', () => {
+			fileManager.classList.toggle('hidden');
+			toggleBtn.textContent = fileManager.classList.contains('hidden') ? '展开' : '隐藏';
+		});
 	</script>
 </body>
 

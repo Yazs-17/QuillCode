@@ -4,6 +4,16 @@
 
 As the description, this project is used for making mini tutorials with interactive functions, and I'd like to use my own toolkit to make it!
 
+## Tasks split
+
+- [ ] 实现实时预览指定文件夹下的markdown files
+- [ ] markdown 上传，文件展示与懒加载
+
+
+
+
+
+
 ## Functions
 
 1. 未来功能前瞻：
@@ -19,7 +29,7 @@ As the description, this project is used for making mini tutorials with interact
 
 ## Some Tools
 
-Vue  ? （or origin html & css & js)  & java springboot (H5 , mongodb or mysql)(or go gin or express) & minidatabase(sqlite and so on )
+Vue (frontend) & java springboot (H5 , mongodb or mysql)(or go gin or express) & minidatabase(sqlite and so on )
 
 ## Start
 
