@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Vue 3 组件示例</title>
+</head>
+
+<body>
+	<div id="app">
+		<user-profile :user="currentUser" @update-user="handleUserUpdate"></user-profile>
+		<counter-widget :initial-count="5"></counter-widget>
+	</div>
+
+	<script type="module">
+		import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+		// 用户资料组件
+		const UserProfile = {
+			props: ['user'],
+			emits: ['update-user'],
+			template: `
+                <div style="border: 1px solid #ccc; padding: 20px; margin: 10px;">
+                    <h3>用户资料</h3>
+                    <p>姓名: {{ user.name }}</p>
+                    <p>邮箱: {{ user.email }}</p>
+                    <button @click="updateName">更新姓名</button>
+                </div>
+            `,
+			setup (props, { emit }) {
+				const updateName = () => {
+					const newName = prompt('输入新姓名:', props.user.name)
+					if (newName) {
+						emit('update-user', {
+							...props.user,
+							name: newName
+						})
+					}
+				}
+
+				return {
+					updateName
+				}
+			}
+		}
+
+		// 计数器组件
+		const CounterWidget = {
+			props: ['initialCount'],
+			template: `
+                <div style="border: 1px solid #ccc; padding: 20px; margin: 10px;">
+                    <h3>计数器组件</h3>
+                    <p>当前计数: {{ count }}</p>
+                    <button @click="increment">+1</button>
+                    <button @click="decrement">-1</button>
+                    <button @click="reset">重置</button>
+                </div>
+            `,
+			setup (props) {
+				const count = ref(props.initialCount || 0)
+
+				const increment = () => {
+					count.value++
+				}
+
+				const decrement = () => {
+					count.value--
+				}
+
+				const reset = () => {
+					count.value = props.initialCount || 0
+				}
+
+				return {
+					count,
+					increment,
+					decrement,
+					reset
+				}
+			}
+		}
+
+		// 主应用
+		createApp({
+			components: {
+				UserProfile,
+				CounterWidget
+			},
+			setup () {
+				const currentUser = ref({
+					name: '张三',
+					email: 'zhangsan@example.com'
+				})
+
+				const handleUserUpdate = (updatedUser) => {
+					currentUser.value = updatedUser
+				}
+
+				return {
+					currentUser,
+					handleUserUpdate
+				}
+			}
+		}).mount('#app')
+	</script>
+</body>
+
+</html>

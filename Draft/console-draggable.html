@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Vue3 全局浮动小块</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+			min-height: 100vh;
+			padding: 20px;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		.page-content {
+			background: white;
+			border-radius: 12px;
+			padding: 30px;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+			min-height: 80vh;
+		}
+
+		h1 {
+			color: #2c3e50;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+
+		p {
+			line-height: 1.6;
+			color: #555;
+			margin-bottom: 15px;
+		}
+
+		/* 浮动小块样式 */
+		.floating-widget {
+			position: fixed;
+			right: 20px;
+			bottom: 20px;
+			width: 60px;
+			height: 60px;
+			background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+			border-radius: 50%;
+			box-shadow: 0 6px 20px rgba(37, 117, 252, 0.5);
+			cursor: move;
+			z-index: 1000;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.3s ease;
+			user-select: none;
+		}
+
+		.floating-widget:hover {
+			transform: scale(1.1);
+			box-shadow: 0 8px 25px rgba(37, 117, 252, 0.7);
+		}
+
+		.floating-widget.active {
+			width: 300px;
+			height: 400px;
+			border-radius: 16px;
+			cursor: default;
+		}
+
+		.widget-icon {
+			font-size: 24px;
+			color: white;
+			transition: all 0.3s ease;
+		}
+
+		.floating-widget.active .widget-icon {
+			opacity: 0;
+		}
+
+		.widget-content {
+			opacity: 0;
+			width: 100%;
+			height: 100%;
+			padding: 20px;
+			transition: opacity 0.3s ease;
+			pointer-events: none;
+		}
+
+		.floating-widget.active .widget-content {
+			opacity: 1;
+			pointer-events: all;
+		}
+
+		.widget-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		}
+
+		.widget-title {
+			color: white;
+			font-size: 18px;
+			font-weight: 600;
+		}
+
+		.close-btn {
+			background: none;
+			border: none;
+			color: white;
+			font-size: 20px;
+			cursor: pointer;
+			padding: 5px;
+			border-radius: 50%;
+			width: 30px;
+			height: 30px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.close-btn:hover {
+			background: rgba(255, 255, 255, 0.2);
+		}
+
+		.widget-body {
+			height: calc(100% - 50px);
+			overflow-y: auto;
+			color: white;
+		}
+
+		.feature-list {
+			list-style: none;
+		}
+
+		.feature-item {
+			padding: 12px 15px;
+			margin-bottom: 10px;
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 8px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.feature-item:hover {
+			background: rgba(255, 255, 255, 0.2);
+			transform: translateX(5px);
+		}
+
+		.feature-item i {
+			margin-right: 10px;
+			font-size: 16px;
+		}
+
+		.drag-indicator {
+			position: absolute;
+			top: 10px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 30px;
+			height: 4px;
+			background: rgba(255, 255, 255, 0.5);
+			border-radius: 2px;
+			display: none;
+		}
+
+		.floating-widget:not(.active) .drag-indicator {
+			display: block;
+		}
+
+		/* 响应式设计 */
+		@media (max-width: 768px) {
+			.floating-widget.active {
+				width: 280px;
+				height: 380px;
+				right: 10px;
+				bottom: 10px;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.floating-widget.active {
+				width: calc(100vw - 40px);
+				height: 50vh;
+				right: 20px;
+				bottom: 20px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="container">
+			<div class="page-content">
+				<h1>Vue3 全局浮动小块演示</h1>
+				<p>这是一个演示页面，展示全局浮动小块的功能。右下角的浮动按钮可以拖动，点击后会展开为功能面板。</p>
+				<p>浮动小块包含以下特性：</p>
+				<ul>
+					<li>可在页面上自由拖动</li>
+					<li>点击展开/收起功能面板</li>
+					<li>响应式设计，适配不同屏幕尺寸</li>
+					<li>美观的渐变背景和动画效果</li>
+					<li>包含多个实用功能选项</li>
+				</ul>
+				<p>请尝试与右下角的浮动小块进行交互，体验其功能。</p>
+			</div>
+		</div>
+
+		<!-- 浮动小块 -->
+		<div class="floating-widget" :class="{ active: isExpanded }" ref="widget" @click="toggleWidget"
+			@mousedown="startDrag">
+			<div class="drag-indicator"></div>
+			<div class="widget-icon">⚙️</div>
+			<div class="widget-content">
+				<div class="widget-header">
+					<h3 class="widget-title">快捷功能</h3>
+					<button class="close-btn" @click.stop="closeWidget">×</button>
+				</div>
+				<div class="widget-body">
+					<ul class="feature-list">
+						<li class="feature-item" @click="showNotification('主题切换功能')">
+							<i>🎨</i> 切换主题
+						</li>
+						<li class="feature-item" @click="showNotification('搜索功能')">
+							<i>🔍</i> 全局搜索
+						</li>
+						<li class="feature-item" @click="showNotification('反馈功能')">
+							<i>📝</i> 意见反馈
+						</li>
+						<li class="feature-item" @click="showNotification('设置功能')">
+							<i>⚙️</i> 系统设置
+						</li>
+						<li class="feature-item" @click="showNotification('帮助功能')">
+							<i>❓</i> 使用帮助
+						</li>
+						<li class="feature-item" @click="showNotification('夜间模式')">
+							<i>🌙</i> 夜间模式
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const { createApp, ref, onMounted, onUnmounted } = Vue;
+
+		createApp({
+			setup () {
+				const isExpanded = ref(false);
+				const widget = ref(null);
+				const isDragging = ref(false);
+				const dragOffset = ref({ x: 0, y: 0 });
+
+				const toggleWidget = () => {
+					if (!isDragging.value) {
+						isExpanded.value = !isExpanded.value;
+					}
+				};
+
+				const closeWidget = () => {
+					isExpanded.value = false;
+				};
+
+				const showNotification = (message) => {
+					alert(`已触发: ${message}`);
+				};
+
+				const startDrag = (e) => {
+					if (isExpanded.value) return;
+
+					isDragging.value = true;
+					const rect = widget.value.getBoundingClientRect();
+					dragOffset.value = {
+						x: e.clientX - rect.left,
+						y: e.clientY - rect.top
+					};
+
+					document.addEventListener('mousemove', onDrag);
+					document.addEventListener('mouseup', stopDrag);
+				};
+
+				const onDrag = (e) => {
+					if (!isDragging.value) return;
+
+					const x = e.clientX - dragOffset.value.x;
+					const y = e.clientY - dragOffset.value.y;
+
+					// 限制在视窗范围内
+					const maxX = window.innerWidth - widget.value.offsetWidth;
+					const maxY = window.innerHeight - widget.value.offsetHeight;
+
+					widget.value.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+					widget.value.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+					widget.value.style.right = 'auto';
+					widget.value.style.bottom = 'auto';
+				};
+
+				const stopDrag = () => {
+					isDragging.value = false;
+					document.removeEventListener('mousemove', onDrag);
+					document.removeEventListener('mouseup', stopDrag);
+				};
+
+				// 添加键盘快捷键支持
+				const handleKeydown = (e) => {
+					if (e.key === 'Escape' && isExpanded.value) {
+						closeWidget();
+					}
+				};
+
+				onMounted(() => {
+					document.addEventListener('keydown', handleKeydown);
+				});
+
+				onUnmounted(() => {
+					document.removeEventListener('keydown', handleKeydown);
+				});
+
+				return {
+					isExpanded,
+					widget,
+					toggleWidget,
+					closeWidget,
+					showNotification,
+					startDrag
+				};
+			}
+		}).mount('#app');
+	</script>
+</body>
+
+</html>
