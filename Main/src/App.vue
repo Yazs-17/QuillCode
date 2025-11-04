@@ -37,7 +37,6 @@ const editorContent = ref(`
 let a = 0;
 let b = 1;
 console.log(a+b)
-
 `)
 const outputMsg = ref({ type: 'log', text: '' });
 
@@ -58,6 +57,9 @@ const runCode = async () => {
 	return;
 };
 
+/**
+ * 代码渲染逻辑
+ */
 
 
 
@@ -109,7 +111,14 @@ const runCode = async () => {
 				</article>
 
 				<section class="workspace">
-					<textarea class="code-editor" v-model="editorContent"></textarea>
+					<div class="">
+						<select name="" id="">
+							<option value="0">JS</option>
+							<option value="1">HTML</option>
+						</select>
+					</div>
+					<textarea class="code-editor" v-model="editorContent">
+					</textarea>
 					<div class="preview">
 						<div>
 							<h1>Hello World</h1>
@@ -242,7 +251,7 @@ textarea:hover {
 
 .workspace {
 	display: grid;
-	grid-template-rows: 1fr 1fr;
+	grid-template-rows: 10px 1fr 1fr;
 	gap: 1rem;
 	padding: 1rem;
 	border: 1px solid var(--hui);

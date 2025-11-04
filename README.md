@@ -13,7 +13,9 @@ As the description, this project is used for making mini tutorials with interact
 - [x] 实时渲染
 - [x] 执行代码（先`New Function`，先支持JS/ TS，后续会用Docker 沙箱， 支持一种编译型语言）
   - [x] 以上的页面嵌入工作正在进行中。
-  - [ ] 
+  - [ ] 逻辑优化的点
+    - 当用户从JS 切到HTML的时候，控制台应该隐藏（？）
+    - 当HTML 切到JS，实时渲染应该隐藏（应该默认会显示一个控制台）
   
 - [ ] 实现实时预览指定文件夹下的markdown files
 - [ ] markdown 上传，文件展示与懒加载
@@ -28,6 +30,9 @@ As the description, this project is used for making mini tutorials with interact
 
 
 - [ ] 个人JWT令牌式验证？
+- [ ] 分享与评论系统，（过期时间，评论curd）
+- [ ] 文章与标题curd
+- [ ] 搜索，rag+es优化
 
 
 
@@ -49,6 +54,8 @@ As the description, this project is used for making mini tutorials with interact
    
 2. 阶段性任务
    - 完成前期基本功能的开发，业务跑通先
+   
+   - 然后美化界面，完善用户交互，优化UI逻辑等等
    
    - 宣传一下自己做的小玩具
    
