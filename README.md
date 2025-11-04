@@ -6,21 +6,28 @@ As the description, this project is used for making mini tutorials with interact
 
 ## Tasks split
 
-
+#### 前端逻辑
 
 - [x] 页面基本布局
 - [x] 滑动控制台
 - [x] 实时渲染
 - [x] 执行代码（先`New Function`，先支持JS/ TS，后续会用Docker 沙箱， 支持一种编译型语言）
-  - [ ] 以上的页面嵌入工作正在进行中。TODO
-
+  - [x] 以上的页面嵌入工作正在进行中。
+  - [ ] 
+  
 - [ ] 实现实时预览指定文件夹下的markdown files
 - [ ] markdown 上传，文件展示与懒加载
 - [ ] 用Vue pinia 同步“当前文件名、内容、保存状态”
 - [ ] 单体 JWT ，保存唯一状态
 - [ ] 文章Vim式 快捷在线编辑
 
+#### 后端逻辑
 
+由于本项目偏向于单点式的用户产品，用户交互甚至只有一个评论交互（？maybe）
+
+
+
+- [ ] 个人JWT令牌式验证？
 
 
 
@@ -37,8 +44,8 @@ As the description, this project is used for making mini tutorials with interact
    - Github发布形式
      - 源码开源
      - 发布两个版本
-       - 版本一，直接能用，仅前端，这个会发到我的个人服务器上，
-       - 版本二，自己在本地部署，包括代码沙箱之类的
+       - 版本一，直接能用，仅前端，这个会发到我的个人服务器上（代码沙箱部分仅采用Web Worker）
+       - 版本二，自己在本地部署，包括代码沙箱之类的，到时可能会加electron出release版本
    
 2. 阶段性任务
    - 完成前期基本功能的开发，业务跑通先

@@ -1,7 +1,72 @@
 <script setup>
+import DialogManager from "./common/DialogManager.vue"
+
+import { ref } from "vue"
+
+import FloatingItem from './components/FloatingConsole.vue'
+
+// const send = (e) => {
+// 	console.log(e)
+// }
+const fmsg = ref("");
+const clean = (e) => {
+	fmsg.value = ""
+}
+
+
+
+
+/**
+ * Console 增加逻辑
+ */
+
+const item = ref(null)
+const addConsole = () => {
+	let x = +prompt("X: ")
+	let y = +prompt("Y: ")
+	item.value.addConsole(x, y);
+	// console.log(item.value.childFunc)
+}
+
+
+
+/**
+ * 代码执行逻辑
+ */
+const editorContent = ref(`
+let a = 0;
+let b = 1;
+console.log(a+b)
+
+`)
+const outputMsg = ref({ type: 'log', text: '' });
+
+
+let code = editorContent.value;
+let url = new URL('./utils/executor.js', import.meta.url)
+const worker = new Worker(url, { type: "module" })
+worker.onmessage = e => {
+	let output = e.data;
+	// TODO: 解决这里程序阻塞仍然可以添加执行器的bug
+	if (output === "isRunning") {
+		alert("程序执行中!")
+	}
+	item.value.pushLog(`[${e.data.type}] ${e.data.text}`)
+}
+const runCode = async () => {
+	worker.postMessage(code)
+	return;
+};
+
+
+
+
+
 </script>
 
 <template>
+
+	<dialog-manager></dialog-manager>
 	<div class="outer">
 		<div class="layout">
 			<header>
@@ -9,10 +74,20 @@
 				<span class="header-actions">
 					<button>新建文章</button>
 					<button>保存</button>
+					<button @click="runCode">Run Code</button>
+					<!--temp for  -->
+					<button @click="addConsole">新建Console</button>
+					<form action.prevent="send">
+						<p>给控制台输入信息：</p>
+						<input type="text" v-model="fmsg" />
+					</form>
+
 				</span>
 			</header>
 
 			<main class="container">
+
+				<FloatingItem ref="item" :fmsg="fmsg" @clean="clean"></FloatingItem>
 				<aside class="file-manager">
 					<h3>📂 文件管理</h3>
 					<ul>
@@ -34,7 +109,7 @@
 				</article>
 
 				<section class="workspace">
-					<textarea class="code-editor"></textarea>
+					<textarea class="code-editor" v-model="editorContent"></textarea>
 					<div class="preview">
 						<div>
 							<h1>Hello World</h1>
