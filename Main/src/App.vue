@@ -1,9 +1,11 @@
 <script setup>
 import DialogManager from "./common/DialogManager.vue"
 
-import { ref, computed } from "vue"
+import { ref, computed, onMounted, onBeforeMount } from "vue"
 
 import FloatingItem from './components/FloatingConsole.vue'
+
+// import FileController from "./components/FileController.vue"
 
 // const send = (e) => {
 // 	console.log(e)
@@ -46,9 +48,7 @@ const mode = ref(ENUM.value.JS)
  * 代码执行逻辑
  */
 const editorContent = ref(`
-let a = 0;
-let b = 1;
-console.log(a+b)
+代码加载中...
 `)
 const outputMsg = ref({ type: 'log', text: '' });
 
@@ -114,8 +114,48 @@ const renderedHtml = computed(() => {
 	return editorContent.value.trim()
 })
 const workspaceRows = computed(() => isHtmlMode.value ? "auto 1fr 1fr" : "auto 1fr")
+/**
+ * 文件管理逻辑
+ */
+const fileSysTitle = ref("default files")
+const fileManagement = ref([])
+const singleFileTitle = ref("")
+
+// const files = ref(null);
+const leftPassage = ref("文章加载中	...")
+const previewFile = async (e) => {
+
+	const idx = e?.target?.closest('#file')?.dataset?.index ?? 0
+	singleFileTitle.value = fileManagement.value[idx];
+	const res = await fetch(fileManagement.value[idx])
+	const text = await res.text();
+	const content = text.split("---")
+	leftPassage.value = content[0];
+	editorContent.value = content[1]
 
 
+
+}
+
+onBeforeMount(
+	async () => {
+		const modules = import.meta.glob('/public/articles/*.md', { query: 'url' })
+		fileManagement.value = Object.keys(modules).map(path => {
+			let url = path.substring(7)
+			return url
+		})
+		setTimeout(async () => {
+			await previewFile();
+		}, 1000)
+
+	}
+)
+
+onMounted(
+	() => {
+		// renderTheFirstFile()
+	}
+)
 
 </script>
 
@@ -128,7 +168,7 @@ const workspaceRows = computed(() => isHtmlMode.value ? "auto 1fr 1fr" : "auto 1
 				<span>QuillCode Space</span>
 				<!-- <span style="floa;"></span> -->
 				<span class="header-actions">
-					<button>新建文章</button>
+					<button @click="test">新建文章</button>
 					<button>保存</button>
 					<button @click="runCode">Run Code</button>
 					<!--temp for  -->
@@ -146,18 +186,23 @@ const workspaceRows = computed(() => isHtmlMode.value ? "auto 1fr 1fr" : "auto 1
 
 				<FloatingItem ref="item" :fmsg="fmsg" @clean="clean"></FloatingItem>
 				<aside class="file-manager">
-					<h3>📂 文件管理</h3>
+					<h2>{{ fileSysTitle }}</h2>
 					<ul>
+						<li v-for="(file, index) in fileManagement" @click="previewFile" :key="index" :data-index="index" id="file"
+							class="file-name-li">
+							{{ file.substring(10) }}
+						</li>
+					</ul>
+					<!-- <ul>
 						<li>chapter1.md</li>
 						<li>chapter2.md</li>
 						<li>右键管理.md</li>
-					</ul>
+					</ul> -->
 				</aside>
 
 				<article class="article">
-					<h2>chapter1.md</h2>
-					<p>1. 直接渲染后端传过来的markdown</p>
-					<p>文件管理栏可以折叠，以便给文章和代码更多空间。</p>
+					<h2>{{ singleFileTitle }}</h2>
+					<div v-html="leftPassage"></div>
 					<div class="toolbar">
 						<button>编辑</button>
 						<button>保存</button>
@@ -228,6 +273,10 @@ button {
 	cursor: pointer;
 }
 
+.file-name-li:hover {
+	background-color: #888;
+	cursor: pointer;
+}
 
 .article .toolbar {
 	display: flex;
