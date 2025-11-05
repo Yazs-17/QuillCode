@@ -162,7 +162,7 @@ onMounted(
 					<ul>
 						<li v-for="(file, index) in fileManagement" @click="previewFile" :key="index" :data-index="index" id="file"
 							class="file-name-li">
-							{{ file.substring(10) }}
+							> {{ file.substring(10) }}
 						</li>
 					</ul>
 					<!-- <ul>
