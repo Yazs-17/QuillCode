@@ -79,7 +79,35 @@ const runCode = async () => {
  * 代码渲染逻辑
  */
 
-// TODO 代码危险过滤
+// TODO 代码危险过滤, 剩下的在归档文案里面
+// const sanitizeHtml = raw => {
+// 	if (typeof document === 'undefined' || typeof raw !== 'string') return raw;
+// 	const template = document.createElement('template');
+// 	template.innerHTML = raw;
+
+// 	// 删除高危标签
+// 	template.content.querySelectorAll('script, iframe, object, embed, link[rel="import"], svg, math').forEach(el => el.remove());
+
+// 	// 删除危险属性
+// 	template.content.querySelectorAll('*').forEach(el => {
+// 		[...el.attributes].forEach(attr => {
+// 			const name = attr.name.toLowerCase();
+// 			const value = attr.value.toLowerCase();
+// 			if (
+// 				/^on/i.test(name) ||                    // onclick 等事件
+// 				/^javascript:/i.test(value) ||          // href="javascript:..."
+// 				/^data:text\/html/i.test(value)         // data URI 注入
+// 																								// Another...
+// 			) {
+// 				el.removeAttribute(attr.name);
+// 			}
+// 		});
+// 	});
+
+// 	return template.innerHTML;
+// };
+// const renderedHtml = computed(() => { if (!isHtmlMode.value) return ''; const raw = editorContent.value ?? ''; if (!raw.trim()) return ''; return sanitizeHtml(raw); });
+
 const isHtmlMode = computed(() => mode.value === ENUM.value.HTML)
 const renderedHtml = computed(() => {
 	if (!isHtmlMode.value) return ""
@@ -130,7 +158,6 @@ const workspaceRows = computed(() => isHtmlMode.value ? "auto 1fr 1fr" : "auto 1
 					<h2>chapter1.md</h2>
 					<p>1. 直接渲染后端传过来的markdown</p>
 					<p>文件管理栏可以折叠，以便给文章和代码更多空间。</p>
-					<p>这个布局结构常用于在线编程学习平台、文档编辑器、AI实验室等。</p>
 					<div class="toolbar">
 						<button>编辑</button>
 						<button>保存</button>
