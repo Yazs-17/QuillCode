@@ -16,12 +16,14 @@ As the description, this project is used for making mini tutorials with interact
   - [ ] 逻辑优化的点
     - 当用户从JS 切到HTML的时候，控制台应该隐藏（？）
     - 当HTML 切到JS，实时渲染应该隐藏（应该默认会显示一个控制台）
-  
 - [ ] 实现实时预览指定文件夹下的markdown files
 - [ ] markdown 上传，文件展示与懒加载
 - [ ] 用Vue pinia 同步“当前文件名、内容、保存状态”
 - [ ] 单体 JWT ，保存唯一状态
 - [ ] 文章Vim式 快捷在线编辑
+- [ ] Pinia 管理主程序状态
+- [ ] 统一管理错误码
+- [ ] 代理前端代码执行逻辑（两种模式：worker / Docker）
 
 #### 后端逻辑
 

@@ -1,7 +1,7 @@
 <script setup>
 import DialogManager from "./common/DialogManager.vue"
 
-import { ref } from "vue"
+import { ref, computed } from "vue"
 
 import FloatingItem from './components/FloatingConsole.vue'
 
@@ -9,8 +9,10 @@ import FloatingItem from './components/FloatingConsole.vue'
 // 	console.log(e)
 // }
 const fmsg = ref("");
+// const jsConsole = ref([]);
 const clean = (e) => {
 	fmsg.value = ""
+	// jsConsole.value = []
 }
 
 
@@ -28,6 +30,16 @@ const addConsole = () => {
 	// console.log(item.value.childFunc)
 }
 
+// TODO 代码组织与分块
+/**
+ * 代码块状态管理
+ */
+const ENUM = ref({
+	JS: 1,
+	HTML: 2
+})
+
+const mode = ref(ENUM.value.JS)
 
 
 /**
@@ -41,7 +53,6 @@ console.log(a+b)
 const outputMsg = ref({ type: 'log', text: '' });
 
 
-let code = editorContent.value;
 let url = new URL('./utils/executor.js', import.meta.url)
 const worker = new Worker(url, { type: "module" })
 worker.onmessage = e => {
@@ -49,11 +60,18 @@ worker.onmessage = e => {
 	// TODO: 解决这里程序阻塞仍然可以添加执行器的bug
 	if (output === "isRunning") {
 		alert("程序执行中!")
+		return
 	}
-	item.value.pushLog(`[${e.data.type}] ${e.data.text}`)
+	const formatted = `[${output.type}] ${output.text}`
+	item.value?.pushLog(formatted)
+	// jsConsole.value.push(formatted)
 }
 const runCode = async () => {
-	worker.postMessage(code)
+	if (mode.value !== ENUM.value.JS) {
+		alert("当前非JS状态，无需执行")
+		return
+	}
+	worker.postMessage(editorContent.value)
 	return;
 };
 
@@ -61,6 +79,13 @@ const runCode = async () => {
  * 代码渲染逻辑
  */
 
+// TODO 代码危险过滤
+const isHtmlMode = computed(() => mode.value === ENUM.value.HTML)
+const renderedHtml = computed(() => {
+	if (!isHtmlMode.value) return ""
+	return editorContent.value.trim()
+})
+const workspaceRows = computed(() => isHtmlMode.value ? "auto 1fr 1fr" : "auto 1fr")
 
 
 
@@ -73,6 +98,7 @@ const runCode = async () => {
 		<div class="layout">
 			<header>
 				<span>QuillCode Space</span>
+				<!-- <span style="floa;"></span> -->
 				<span class="header-actions">
 					<button>新建文章</button>
 					<button>保存</button>
@@ -85,6 +111,7 @@ const runCode = async () => {
 					</form>
 
 				</span>
+				<span></span>
 			</header>
 
 			<main class="container">
@@ -110,21 +137,25 @@ const runCode = async () => {
 					</div>
 				</article>
 
-				<section class="workspace">
-					<div class="">
-						<select name="" id="">
-							<option value="0">JS</option>
-							<option value="1">HTML</option>
+				<section class="workspace" :style="{ gridTemplateRows: workspaceRows }">
+					<div class="mode-switch">
+						<select name="" id="" v-model="mode">
+							<option :value="ENUM.JS">JS</option>
+							<option :value="ENUM.HTML">HTML</option>
 						</select>
 					</div>
-					<textarea class="code-editor" v-model="editorContent">
-					</textarea>
-					<div class="preview">
-						<div>
-							<h1>Hello World</h1>
-							<p>我是一段实时渲染的内容~</p>
-						</div>
+					<textarea class="code-editor" v-model="editorContent"></textarea>
+					<div class="preview" v-if="isHtmlMode">
+						<div v-if="renderedHtml" v-html="renderedHtml"></div>
+						<p v-else class="preview-placeholder">在这里输入 HTML 预览内容~</p>
 					</div>
+					<!-- <div class="preview js-console" v-else>
+						<h3>JS 控制台输出</h3>
+						<ul v-if="jsConsole.length">
+							<li v-for="(log, logIndex) in jsConsole" :key="logIndex">{{ log }}</li>
+						</ul>
+						<p v-else>运行代码后，输出会显示在这里或浮动控制台中。</p>
+					</div> -->
 				</section>
 			</main>
 
@@ -251,10 +282,29 @@ textarea:hover {
 
 .workspace {
 	display: grid;
-	grid-template-rows: 10px 1fr 1fr;
 	gap: 1rem;
 	padding: 1rem;
 	border: 1px solid var(--hui);
+}
+
+.mode-switch {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.mode-switch select {
+	padding: 0.25rem 0.75rem;
+	border-radius: 4px;
+	border: 1px solid var(--hui);
+	background-color: var(--bai);
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.mode-switch select:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(86, 156, 214, 0.3);
 }
 
 .code-editor,
