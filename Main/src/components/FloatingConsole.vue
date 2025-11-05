@@ -98,6 +98,12 @@ const pushLog = (e) => {
 }
 
 
+/**
+ * 日志清理
+ */
+const cleanConsole = () => {
+	consoleLog.value = []
+}
 
 /**
  * 统一管控对外暴露的接口
@@ -119,7 +125,8 @@ defineExpose({
 				<!-- TODO 修改为相对样式 -->
 				<!-- <div class="msg-input">{{ parentMsg }}</div> -->
 				<div class="msg-input">执行控制台: {{ parentMsg }}</div>
-				<button @click="$emit('clean')" class="clean-button">C</button>
+				<button id="cleanFather" @click="$emit('clean')" class="clean-button">C</button>
+				<button id="cleanConsole" @click="cleanConsole" class="clean-console-button">CC</button>
 				<button class="exit-button" @click="exit">X</button>
 			</div>
 			<div>
@@ -174,6 +181,13 @@ defineExpose({
 .clean-button {
 	position: absolute;
 	right: 30px;
+	margin: 5px;
+	top: 0;
+}
+
+.clean-console-button {
+	position: absolute;
+	right: 60px;
 	margin: 5px;
 	top: 0;
 }
