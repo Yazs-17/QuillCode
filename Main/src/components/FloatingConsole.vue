@@ -28,7 +28,7 @@ watch(
 // )
 
 const boxes = ref([
-	{ x: 100, y: 100 },
+	// { x: 500, y: 500 },
 	// { x: 20, y: 11 }
 ])
 // const computedBoxes = compute

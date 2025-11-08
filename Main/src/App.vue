@@ -120,21 +120,86 @@ const workspaceRows = computed(() => isHtmlMode.value ? "auto 1fr 1fr" : "auto 1
 const fileSysTitle = ref("default files")
 const fileManagement = ref([])
 const singleFileTitle = ref("")
+const fileIdx = ref(0)
+const isEditing = ref(false)
+const filesContent = ref({})
 
 // const files = ref(null);
+// TODO 研究源码
 const leftPassage = ref("文章加载中	...")
-const previewFile = async (e) => {
+const previewFile = async (index = 0) => {
 
-	const idx = e?.target?.closest('#file')?.dataset?.index ?? 0
-	singleFileTitle.value = fileManagement.value[idx];
-	const res = await fetch(fileManagement.value[idx])
-	const text = await res.text();
-	const content = text.split("---")
-	leftPassage.value = content[0];
-	editorContent.value = content[1]
+	fileIdx.value = index ?? 0
+	const idx = fileIdx.value
+	singleFileTitle.value = fileManagement.value[idx] || '';
+	const path = fileManagement.value[idx]
+	if (!path) {
+		leftPassage.value = '文章加载中\t...'
+		editorContent.value = ''
+		return
+	}
 
+	// Prefer in-memory content when present (created/edited files)
+	if (filesContent.value[path]) {
+		const text = filesContent.value[path]
+		const content = text.split('---')
+		leftPassage.value = content[0] ?? ''
+		editorContent.value = content[1] ?? ''
+		return
+	}
 
+	try {
+		const res = await fetch(path)
+		const text = await res.text();
+		const content = text.split('---')
+		leftPassage.value = content[0] ?? '';
+		editorContent.value = content[1] ?? '';
+	} catch (err) {
+		// fallback if fetch fails
+		leftPassage.value = '';
+		editorContent.value = '';
+	}
+	isEditing.value = false
+}
 
+const ensureUniquePath = (base) => {
+	let path = `articles/${base}.md`
+	let i = 1
+	while (fileManagement.value.includes(path)) {
+		path = `articles/${base}-${i}.md`
+		i++
+	}
+	return path
+}
+
+const createFile = async () => {
+	const name = prompt('请输入新文件名（不带扩展名）:')
+	if (!name) return
+	const path = ensureUniquePath(name.replace(/\s+/g, '-'))
+	// default content: leftPassage and editorContent separated by ---
+	const defaultContent = `# ${name}\n\n---\n\n`
+	filesContent.value[path] = defaultContent
+	// add to file list and select it
+	fileManagement.value.unshift(path)
+	await previewFile(0)
+}
+
+const toggleEdit = () => {
+	isEditing.value = !isEditing.value
+}
+
+const saveFile = async () => {
+	const idx = fileIdx.value
+	const path = fileManagement.value[idx]
+	if (!path) return
+	// compose text from leftPassage and editorContent
+	const composed = `${leftPassage.value}\n---\n${editorContent.value}`
+	// Save to in-memory map. Persisting to disk/server isn't implemented here (requires backend).
+	filesContent.value[path] = composed
+	isEditing.value = false
+	// update singleFileTitle in case path changed
+	singleFileTitle.value = path
+	alert('已保存（仅内存中，刷新后会丢失，若需要持久化请实现后端保存）')
 }
 
 onBeforeMount(
@@ -167,19 +232,29 @@ onMounted(
 			<header>
 				<span>QuillCode Space</span>
 				<!-- <span style="floa;"></span> -->
-				<span class="header-actions">
-					<button @click="test">新建文章</button>
-					<button>保存</button>
-					<button @click="runCode">Run Code</button>
-					<!--temp for  -->
-					<button @click="addConsole">新建Console</button>
-					<form action.prevent="send">
-						<p>给控制台输入信息：</p>
-						<input type="text" v-model="fmsg" />
-					</form>
+				<span class="header-actions" style="display: flex; justify-content: space-between;">
+					<div>
+						<button @click="createFile">新建文章</button>
+						<button>保存</button>
+						<button @click="runCode">Run Code</button>
+						<!--temp for  -->
+						<button @click="addConsole">新建Console</button>
+						<span>
+							<!-- <form action.prevent="send"> -->
+							<!-- <p>给控制台输入信息：</p> -->
+							给控制台输入信息：<input type="text" v-model="fmsg" />
+							<!-- </form> -->
+						</span>
+
+					</div>
+					<div>
+						<span>
+							<button>Login</button>
+						</span>
+					</div>
 
 				</span>
-				<span></span>
+
 			</header>
 
 			<main class="container">
@@ -188,8 +263,9 @@ onMounted(
 				<aside class="file-manager">
 					<h2>{{ fileSysTitle }}</h2>
 					<ul>
-						<li v-for="(file, index) in fileManagement" @click="previewFile" :key="index" :data-index="index" id="file"
-							class="file-name-li">
+						<!-- 加入仅选中元素变色逻辑 -->
+						<li v-for="(file, index) in fileManagement" @click="previewFile(index)" :key="index" :data-index="index"
+							:class="['file-name-li', { selected: fileIdx === index }]">
 							> {{ file.substring(10) }}
 						</li>
 					</ul>
@@ -202,10 +278,16 @@ onMounted(
 
 				<article class="article">
 					<h2>{{ singleFileTitle }}</h2>
-					<div v-html="leftPassage"></div>
+					<div v-if="!isEditing" v-html="leftPassage"></div>
+					<div v-else>
+
+						<textarea v-model="leftPassage"
+							style="width:100%;height:50vh;padding:8px;border:1px solid var(--hui);border-radius:4px;"></textarea>
+						<!-- <textarea v-model="leftPassage"></textarea> -->
+					</div>
 					<div class="toolbar">
-						<button>编辑</button>
-						<button>保存</button>
+						<button @click="toggleEdit">{{ isEditing ? '取消编辑' : '编辑' }}</button>
+						<button @click="saveFile">保存</button>
 					</div>
 				</article>
 
@@ -273,9 +355,13 @@ button {
 	cursor: pointer;
 }
 
-.file-name-li:hover {
+.file-name-li:hover:not(.selected) {
 	background-color: #888;
 	cursor: pointer;
+}
+
+.file-name-li.selected {
+	background-color: #888;
 }
 
 .article .toolbar {
