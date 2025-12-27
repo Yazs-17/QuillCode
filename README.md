@@ -90,6 +90,24 @@ TODO
 TODO
 
 
+## To Start
+
+1. node 20.19.5
+2. docker pull elasticsearch:8.12.2
+   ```bash
+   docker run -d --name es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" elasticsearch:8.12.2
+   
+   ```
+
+3. ollama llama3:8b
+
+4. mysql 8.0.39
+
+5. nestjs, vue3 版本均在 package中给出 
+
+
+
+
 ## if you ?
 
 如果你想用原生手写，你只需要做到：
