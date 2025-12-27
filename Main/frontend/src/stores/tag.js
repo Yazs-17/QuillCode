@@ -91,7 +91,7 @@ export const useTagStore = defineStore('tag', () => {
 		error.value = null
 		try {
 			const response = await tagService.getTagArticles(tagId)
-			const articles = response.data || response
+			const articles = Array.isArray(response) ? response : (response.data || response)
 			setTagArticles(articles)
 			setSelectedTagId(tagId)
 			return articles

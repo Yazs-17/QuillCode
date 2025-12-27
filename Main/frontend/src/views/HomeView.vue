@@ -82,16 +82,24 @@ const articleStore = useArticleStore()
 const tagStore = useTagStore()
 
 const { isAuthenticated } = storeToRefs(authStore)
-const { articles, loading } = storeToRefs(articleStore)
-const { tagArticles, tags } = storeToRefs(tagStore)
+const { articles, loading: articlesLoading } = storeToRefs(articleStore)
+const { tagArticles, tags, loading: tagsLoading } = storeToRefs(tagStore)
 
 const selectedTagId = ref(null)
 
+// 根据是否选中标签来显示对应的 loading 状态
+const loading = computed(() => {
+  if (selectedTagId.value) {
+    return tagsLoading.value
+  }
+  return articlesLoading.value
+})
+
 const displayArticles = computed(() => {
   if (selectedTagId.value) {
-    return tagArticles.value
+    return tagArticles.value || []
   }
-  return articles.value
+  return articles.value || []
 })
 
 const selectedTagName = computed(() => {

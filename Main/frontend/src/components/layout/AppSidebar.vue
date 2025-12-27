@@ -28,12 +28,9 @@ const sortedTags = computed(() => {
 })
 
 function handleTagClick(tagId) {
-  if (selectedTagId.value === tagId) {
-    selectedTagId.value = null
-  } else {
-    selectedTagId.value = tagId
-  }
-  emit('tagSelect', selectedTagId.value)
+  const newValue = selectedTagId.value === tagId ? null : tagId
+  emit('tagSelect', newValue)
+  selectedTagId.value = newValue
 }
 
 function createNewArticle() {
@@ -49,13 +46,14 @@ function toggleSidebar() {
 <template>
   <aside class="app-sidebar" :class="{ collapsed: !sidebarOpen }">
     <div class="sidebar-header">
-      <h3 v-if="sidebarOpen">标签筛选</h3>
+      <h3 v-show="sidebarOpen">标签筛选</h3>
       <button class="toggle-btn" @click="toggleSidebar" :title="sidebarOpen ? '收起' : '展开'">
-        {{ sidebarOpen ? '◀' : '▶' }}
+        <span class="toggle-icon" :class="{ rotated: !sidebarOpen }">◀</span>
       </button>
     </div>
 
-    <div v-if="sidebarOpen" class="sidebar-content">
+    <!-- 展开状态内容 -->
+    <div class="sidebar-content" :class="{ hidden: !sidebarOpen }">
       <button class="new-article-btn" @click="createNewArticle">
         + 新建笔记
       </button>
@@ -85,7 +83,8 @@ function toggleSidebar() {
       </div>
     </div>
 
-    <div v-else class="sidebar-collapsed">
+    <!-- 收起状态内容 -->
+    <div class="sidebar-collapsed" :class="{ hidden: sidebarOpen }">
       <button class="new-article-btn-mini" @click="createNewArticle" title="新建笔记">
         +
       </button>
@@ -100,8 +99,9 @@ function toggleSidebar() {
   border-right: 1px solid var(--hui);
   display: flex;
   flex-direction: column;
-  transition: width 0.2s ease;
+  transition: width 0.25s ease;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .app-sidebar.collapsed {
@@ -114,6 +114,7 @@ function toggleSidebar() {
   align-items: center;
   padding: 12px 16px;
   border-bottom: 1px solid var(--hui);
+  min-height: 44px;
 }
 
 .sidebar-header h3 {
@@ -121,6 +122,7 @@ function toggleSidebar() {
   font-size: 14px;
   font-weight: 600;
   color: #333;
+  white-space: nowrap;
 }
 
 .toggle-btn {
@@ -130,10 +132,21 @@ function toggleSidebar() {
   color: #666;
   cursor: pointer;
   font-size: 12px;
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .toggle-btn:hover {
   background: var(--danhui);
+}
+
+.toggle-icon {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.toggle-icon.rotated {
+  transform: rotate(180deg);
 }
 
 .sidebar-content {
@@ -142,12 +155,20 @@ function toggleSidebar() {
   padding: 12px;
 }
 
+.sidebar-content.hidden {
+  display: none;
+}
+
 .sidebar-collapsed {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 12px 0;
+}
+
+.sidebar-collapsed.hidden {
+  display: none;
 }
 
 .new-article-btn {
@@ -227,7 +248,7 @@ function toggleSidebar() {
   border-radius: 6px;
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s;
+  transition: background 0.15s ease;
 }
 
 .tag-item:hover {
@@ -235,7 +256,7 @@ function toggleSidebar() {
 }
 
 .tag-item.active {
-  background: rgba(74, 144, 217, 0.1);
+  background: rgba(74, 144, 217, 0.15);
   color: var(--primary);
 }
 
@@ -275,10 +296,13 @@ function toggleSidebar() {
     bottom: 0;
     z-index: 100;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    width: 220px;
+    transition: transform 0.25s ease;
   }
   
   .app-sidebar.collapsed {
     transform: translateX(-100%);
+    width: 220px;
   }
 }
 </style>

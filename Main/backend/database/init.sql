@@ -5,7 +5,7 @@
 -- 密码: sjblp
 -- =====================================================
 
--- 创建数据库（如果不存在）
+-- 创建数据库
 CREATE DATABASE IF NOT EXISTS `code_notebook` 
   CHARACTER SET utf8mb4 
   COLLATE utf8mb4_unicode_ci;
