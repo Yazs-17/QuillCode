@@ -2,7 +2,7 @@
 	<AppLayout>
 		<div class="admin-content">
 			<div class="content-header">
-				<h2>📊 管理员统计面板</h2>
+				<h2><span class="header-icon css-icon icon-chart"></span> 管理员统计面板</h2>
 			</div>
 
 			<LoadingState v-if="loading" text="加载统计数据..." />
@@ -13,42 +13,42 @@
 					<h3>全站概览</h3>
 					<div class="stats-grid">
 						<div class="stat-card">
-							<span class="stat-icon">👥</span>
+							<span class="stat-icon css-icon icon-users"></span>
 							<div class="stat-info">
 								<span class="stat-value">{{ siteStats?.totalUsers || 0 }}</span>
 								<span class="stat-label">总用户数</span>
 							</div>
 						</div>
 						<div class="stat-card">
-							<span class="stat-icon">📝</span>
+							<span class="stat-icon css-icon icon-document"></span>
 							<div class="stat-info">
 								<span class="stat-value">{{ siteStats?.totalArticles || 0 }}</span>
 								<span class="stat-label">总文章数</span>
 							</div>
 						</div>
 						<div class="stat-card">
-							<span class="stat-icon">🏷️</span>
+							<span class="stat-icon css-icon icon-tag"></span>
 							<div class="stat-info">
 								<span class="stat-value">{{ siteStats?.totalTags || 0 }}</span>
 								<span class="stat-label">总标签数</span>
 							</div>
 						</div>
 						<div class="stat-card">
-							<span class="stat-icon">🔗</span>
+							<span class="stat-icon css-icon icon-link"></span>
 							<div class="stat-info">
 								<span class="stat-value">{{ siteStats?.totalShares || 0 }}</span>
 								<span class="stat-label">总分享数</span>
 							</div>
 						</div>
 						<div class="stat-card">
-							<span class="stat-icon">💬</span>
+							<span class="stat-icon css-icon icon-comment"></span>
 							<div class="stat-info">
 								<span class="stat-value">{{ siteStats?.totalComments || 0 }}</span>
 								<span class="stat-label">总评论数</span>
 							</div>
 						</div>
 						<div class="stat-card highlight">
-							<span class="stat-icon">📈</span>
+							<span class="stat-icon css-icon icon-trending"></span>
 							<div class="stat-info">
 								<span class="stat-value">{{ siteStats?.recentArticles || 0 }}</span>
 								<span class="stat-label">近7天新文章</span>
@@ -62,21 +62,21 @@
 					<h3>文章类型分布</h3>
 					<div class="type-stats">
 						<div class="type-item">
-							<span class="type-label">🧮 算法题解</span>
+							<span class="type-label"><span class="type-icon css-icon icon-algorithm"></span> 算法题解</span>
 							<div class="type-bar">
 								<div class="type-fill algorithm" :style="{ width: getTypePercent('algorithm') + '%' }"></div>
 							</div>
 							<span class="type-count">{{ siteStats?.articlesByType?.algorithm || 0 }}</span>
 						</div>
 						<div class="type-item">
-							<span class="type-label">📋 代码片段</span>
+							<span class="type-label"><span class="type-icon css-icon icon-code"></span> 代码片段</span>
 							<div class="type-bar">
 								<div class="type-fill snippet" :style="{ width: getTypePercent('snippet') + '%' }"></div>
 							</div>
 							<span class="type-count">{{ siteStats?.articlesByType?.snippet || 0 }}</span>
 						</div>
 						<div class="type-item">
-							<span class="type-label">🌐 HTML页面</span>
+							<span class="type-label"><span class="type-icon css-icon icon-globe"></span> HTML页面</span>
 							<div class="type-bar">
 								<div class="type-fill html" :style="{ width: getTypePercent('html') + '%' }"></div>
 							</div>
@@ -87,7 +87,7 @@
 
 				<!-- 热门标签（视图 v_popular_tags） -->
 				<section class="stats-section">
-					<h3>🏷️ 热门标签 TOP 10 <span class="db-badge">视图: v_popular_tags</span></h3>
+					<h3><span class="section-icon css-icon icon-tag"></span> 热门标签 TOP 10 <span class="db-badge">视图: v_popular_tags</span></h3>
 					<div class="tags-list">
 						<div v-for="(tag, index) in popularTags.slice(0, 10)" :key="tag.tagId" class="tag-item">
 							<span class="tag-rank">#{{ index + 1 }}</span>
@@ -100,7 +100,7 @@
 
 				<!-- 用户统计（视图 v_user_statistics） -->
 				<section class="stats-section">
-					<h3>👥 用户统计 <span class="db-badge">视图: v_user_statistics</span></h3>
+					<h3><span class="section-icon css-icon icon-users"></span> 用户统计 <span class="db-badge">视图: v_user_statistics</span></h3>
 					<div class="table-container">
 						<table class="stats-table">
 							<thead>
@@ -140,7 +140,7 @@
 
 				<!-- 文章详情列表（视图 v_article_details） -->
 				<section class="stats-section">
-					<h3>📝 文章详情列表 <span class="db-badge">视图: v_article_details</span></h3>
+					<h3><span class="section-icon css-icon icon-document"></span> 文章详情列表 <span class="db-badge">视图: v_article_details</span></h3>
 					<div class="table-container">
 						<table class="stats-table">
 							<thead>
@@ -176,7 +176,7 @@
 
 				<!-- 操作日志（触发器自动记录） -->
 				<section class="stats-section">
-					<h3>📋 操作日志 <span class="db-badge">触发器自动记录</span></h3>
+					<h3><span class="section-icon css-icon icon-document"></span> 操作日志 <span class="db-badge">触发器自动记录</span></h3>
 					<div class="table-container">
 						<table class="stats-table">
 							<thead>
@@ -218,13 +218,15 @@
 
 				<!-- 维护操作 -->
 				<section class="stats-section">
-					<h3>🔧 维护操作 <span class="db-badge">存储过程: sp_cleanup_expired_shares</span></h3>
+					<h3><span class="section-icon css-icon icon-settings"></span> 维护操作 <span class="db-badge">存储过程: sp_cleanup_expired_shares</span></h3>
 					<div class="maintenance-actions">
 						<button class="action-btn" @click="handleCleanup" :disabled="cleaning">
-							{{ cleaning ? '清理中...' : '🗑️ 清理过期分享' }}
+							<span class="btn-icon css-icon icon-trash"></span>
+							{{ cleaning ? '清理中...' : '清理过期分享' }}
 						</button>
 						<button class="action-btn" @click="refreshData">
-							🔄 刷新数据
+							<span class="btn-icon css-icon icon-refresh"></span>
+							刷新数据
 						</button>
 					</div>
 				</section>
@@ -457,7 +459,28 @@ onMounted(async () => {
 }
 
 .stat-icon {
-	font-size: 28px;
+	font-size: 24px;
+	color: var(--primary);
+}
+
+.header-icon {
+	font-size: 20px;
+	margin-right: 8px;
+}
+
+.section-icon {
+	font-size: 16px;
+	margin-right: 6px;
+}
+
+.type-icon {
+	font-size: 14px;
+	margin-right: 4px;
+}
+
+.btn-icon {
+	font-size: 14px;
+	margin-right: 6px;
 }
 
 .stat-info {
@@ -491,6 +514,8 @@ onMounted(async () => {
 .type-label {
 	width: 120px;
 	font-size: 14px;
+	display: flex;
+	align-items: center;
 }
 
 .type-bar {
@@ -684,6 +709,8 @@ onMounted(async () => {
 	font-weight: 500;
 	background: var(--primary);
 	color: white;
+	display: flex;
+	align-items: center;
 }
 
 .action-btn.secondary {

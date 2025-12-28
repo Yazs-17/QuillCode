@@ -65,7 +65,7 @@ function isActive (name) {
 				← 返回
 			</button>
 			<router-link v-else to="/" class="logo">
-				<span class="logo-icon">🪶</span>
+				<span class="logo-icon css-icon icon-quill"></span>
 				<span class="logo-text">{{ title }}</span>
 			</router-link>
 
@@ -75,16 +75,20 @@ function isActive (name) {
 
 		<nav v-if="showNav && isAuthenticated" class="header-nav">
 			<router-link to="/" class="nav-link" :class="{ active: isActive('Home') }">
-				📝 片段
+				<span class="nav-icon css-icon icon-document"></span>
+				<span class="nav-text">片段</span>
 			</router-link>
 			<router-link to="/search" class="nav-link" :class="{ active: isActive('Search') }">
-				🔍 搜索
+				<span class="nav-icon css-icon icon-search"></span>
+				<span class="nav-text">搜索</span>
 			</router-link>
 			<router-link to="/shares" class="nav-link" :class="{ active: isActive('ShareManage') }">
-				🔗 分享
+				<span class="nav-icon css-icon icon-link"></span>
+				<span class="nav-text">分享</span>
 			</router-link>
 			<router-link v-if="isAdmin" to="/admin" class="nav-link" :class="{ active: isActive('Admin') }">
-				📊 统计
+				<span class="nav-icon css-icon icon-chart"></span>
+				<span class="nav-text">统计</span>
 			</router-link>
 		</nav>
 
@@ -194,12 +198,19 @@ function isActive (name) {
 }
 
 .nav-link {
+	display: flex;
+	align-items: center;
+	gap: 6px;
 	padding: 8px 16px;
 	border-radius: 6px;
 	color: #666;
 	font-size: 14px;
 	text-decoration: none;
 	transition: all 0.2s;
+}
+
+.nav-icon {
+	font-size: 14px;
 }
 
 .nav-link:hover {

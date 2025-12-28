@@ -51,14 +51,17 @@ CREATE TABLE IF NOT EXISTS `articles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章表';
 
 -- =====================================================
--- 3. 标签表 (tags)
+-- 3. 标签表 (tags) - 用户隔离模式
 -- =====================================================
 CREATE TABLE IF NOT EXISTS `tags` (
   `id` CHAR(36) NOT NULL COMMENT '标签UUID',
+  `user_id` CHAR(36) NOT NULL COMMENT '所属用户ID',
   `name` VARCHAR(50) NOT NULL COMMENT '标签名称',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_name` (`name`)
+  KEY `idx_user_id` (`user_id`),
+  UNIQUE KEY `uk_user_tag` (`user_id`, `name`),
+  CONSTRAINT `fk_tags_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='标签表';
 
 -- =====================================================
@@ -166,17 +169,18 @@ LEFT JOIN articles a ON u.id = a.user_id
 LEFT JOIN shares s ON a.id = s.article_id
 GROUP BY u.id, u.username, u.email, u.created_at;
 
--- 视图3: 热门标签视图
+-- 视图3: 热门标签视图 (用户级别)
 DROP VIEW IF EXISTS `v_popular_tags`;
 CREATE VIEW `v_popular_tags` AS
 SELECT 
   t.id AS tag_id,
+  t.user_id,
   t.name AS tag_name,
   COUNT(at.article_id) AS usage_count,
   t.created_at
 FROM tags t
 LEFT JOIN article_tags at ON t.id = at.tag_id
-GROUP BY t.id, t.name, t.created_at
+GROUP BY t.id, t.user_id, t.name, t.created_at
 ORDER BY usage_count DESC;
 
 -- =====================================================
@@ -397,23 +401,8 @@ DELIMITER ;
 -- 初始化数据（可选）
 -- =====================================================
 
--- 插入一些默认标签
-INSERT INTO `tags` (`id`, `name`) VALUES
-  (UUID(), 'JavaScript'),
-  (UUID(), 'TypeScript'),
-  (UUID(), 'Python'),
-  (UUID(), 'Java'),
-  (UUID(), 'Algorithm'),
-  (UUID(), 'Data Structure'),
-  (UUID(), 'Vue'),
-  (UUID(), 'React'),
-  (UUID(), 'Node.js'),
-  (UUID(), 'CSS'),
-  (UUID(), 'HTML'),
-  (UUID(), 'Database'),
-  (UUID(), 'API'),
-  (UUID(), 'Tutorial')
-ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
+-- 注意：默认标签已移除，因为标签现在需要关联用户
+-- 用户可以在注册后自行创建标签
 
 -- =====================================================
 -- 完成

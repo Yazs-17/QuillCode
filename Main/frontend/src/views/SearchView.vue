@@ -11,13 +11,15 @@
 					</button>
 				</div>
 				<div v-if="!esAvailable" class="es-warning">
-					⚠️ Elasticsearch 未连接，搜索功能不可用
+					<span class="css-icon icon-warning warning-icon"></span>
+					Elasticsearch 未连接，搜索功能不可用
 				</div>
 				<div v-else class="es-status">
 					<span class="status-dot online"></span>
 					<span>Elasticsearch 已连接</span>
 					<button class="reindex-btn" @click="handleReindex" :disabled="reindexing">
-						{{ reindexing ? '重建中...' : '🔄 重建索引' }}
+						<span class="css-icon icon-refresh btn-icon"></span>
+						{{ reindexing ? '重建中...' : '重建索引' }}
 					</button>
 				</div>
 			</div>
@@ -25,7 +27,7 @@
 			<div class="search-results">
 				<LoadingState v-if="loading" text="正在搜索..." />
 
-				<EmptyState v-else-if="searched && results.length === 0" icon="🔍" title="未找到匹配的文章" description="尝试使用不同的关键词" />
+				<EmptyState v-else-if="searched && results.length === 0" icon="search" title="未找到匹配的文章" description="尝试使用不同的关键词" />
 
 				<div v-else-if="results.length > 0" class="results-list">
 					<p class="results-count">找到 {{ results.length }} 篇相关文章</p>
@@ -229,11 +231,22 @@ function goToArticle (id) {
 
 .es-warning {
 	margin-top: 0.5rem;
-	padding: 0.5rem;
+	padding: 0.5rem 0.75rem;
 	background: #fff3cd;
 	color: #856404;
 	border-radius: 4px;
 	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.warning-icon {
+	font-size: 14px;
+}
+
+.btn-icon {
+	font-size: 12px;
 }
 
 .es-status {
@@ -266,6 +279,9 @@ function goToArticle (id) {
 	border-radius: 4px;
 	cursor: pointer;
 	transition: background 0.2s;
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
 }
 
 .reindex-btn:hover:not(:disabled) {

@@ -9,7 +9,7 @@
 
       <EmptyState
         v-else-if="shares.length === 0"
-        icon="🔗"
+        icon="link"
         title="暂无分享链接"
         description="在文章详情页点击分享按钮创建分享链接"
         action-text="浏览文章"

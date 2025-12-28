@@ -3,7 +3,7 @@
     <div class="card-header">
       <div class="card-badges">
         <span class="article-type" :class="article.type">{{ typeLabel }}</span>
-        <span v-if="hasShare" class="share-badge" title="已分享">🔗</span>
+        <span v-if="hasShare" class="share-badge css-icon icon-link" title="已分享"></span>
       </div>
       <span class="article-language">{{ article.language }}</span>
     </div>
@@ -121,8 +121,9 @@ function handleClick() {
 }
 
 .share-badge {
-  font-size: 14px;
+  font-size: 12px;
   cursor: help;
+  color: var(--primary);
 }
 
 .article-language {

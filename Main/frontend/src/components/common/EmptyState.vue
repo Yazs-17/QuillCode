@@ -1,8 +1,10 @@
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   icon: {
     type: String,
-    default: '📭'
+    default: 'empty'
   },
   title: {
     type: String,
@@ -20,6 +22,20 @@ defineProps({
 
 const emit = defineEmits(['action'])
 
+// Map icon names to CSS classes
+const iconClass = computed(() => {
+  const iconMap = {
+    'empty': 'icon-empty',
+    'document': 'icon-document',
+    'search': 'icon-search',
+    'link': 'icon-link',
+    'tag': 'icon-tag',
+    'error': 'icon-error',
+    'comment': 'icon-comment'
+  }
+  return iconMap[props.icon] || 'icon-empty'
+})
+
 function handleAction() {
   emit('action')
 }
@@ -27,7 +43,7 @@ function handleAction() {
 
 <template>
   <div class="empty-state">
-    <span class="empty-icon">{{ icon }}</span>
+    <span class="empty-icon css-icon" :class="iconClass"></span>
     <h3 class="empty-title">{{ title }}</h3>
     <p v-if="description" class="empty-description">{{ description }}</p>
     <button v-if="actionText" class="empty-action" @click="handleAction">
@@ -50,7 +66,7 @@ function handleAction() {
 .empty-icon {
   font-size: 48px;
   margin-bottom: 16px;
-  opacity: 0.8;
+  color: #999;
 }
 
 .empty-title {

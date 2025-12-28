@@ -2,6 +2,7 @@ import {
 	Injectable,
 	NotFoundException,
 	ConflictException,
+	ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -20,10 +21,10 @@ export class TagService {
 		private articleRepository: Repository<Article>,
 	) { }
 
-	async create(createTagDto: CreateTagDto): Promise<Tag> {
-		// Check if tag already exists
+	async create(createTagDto: CreateTagDto, userId: string): Promise<Tag> {
+		// Check if tag already exists for this user (user-scoped uniqueness)
 		const existingTag = await this.tagRepository.findOne({
-			where: { name: createTagDto.name },
+			where: { name: createTagDto.name, userId },
 		});
 
 		if (existingTag) {
@@ -33,21 +34,28 @@ export class TagService {
 			});
 		}
 
-		const tag = this.tagRepository.create(createTagDto);
+		const tag = this.tagRepository.create({
+			...createTagDto,
+			userId,
+		});
 		return this.tagRepository.save(tag);
 	}
 
-	async findAll(): Promise<(Tag & { articleCount: number })[]> {
+	async findAll(userId: string): Promise<(Tag & { articleCount: number })[]> {
 		const tags = await this.tagRepository.find({
+			where: { userId },
 			order: { name: 'ASC' },
 		});
 
-		// Get article counts for each tag
+		// Get article counts for each tag (only counting user's articles)
 		const tagsWithCount = await Promise.all(
 			tags.map(async (tag) => {
-				const articleCount = await this.articleTagRepository.count({
-					where: { tagId: tag.id },
-				});
+				const articleCount = await this.articleTagRepository
+					.createQueryBuilder('articleTag')
+					.innerJoin('articleTag.article', 'article')
+					.where('articleTag.tagId = :tagId', { tagId: tag.id })
+					.andWhere('article.userId = :userId', { userId })
+					.getCount();
 				return { ...tag, articleCount };
 			}),
 		);
@@ -55,9 +63,9 @@ export class TagService {
 		return tagsWithCount;
 	}
 
-	async findOne(id: string): Promise<Tag> {
+	async findOne(id: string, userId: string): Promise<Tag> {
 		const tag = await this.tagRepository.findOne({
-			where: { id },
+			where: { id, userId },
 		});
 
 		if (!tag) {
@@ -70,15 +78,15 @@ export class TagService {
 		return tag;
 	}
 
-	async findByName(name: string): Promise<Tag | null> {
+	async findByName(name: string, userId: string): Promise<Tag | null> {
 		return this.tagRepository.findOne({
-			where: { name },
+			where: { name, userId },
 		});
 	}
 
 	async getArticlesByTag(tagId: string, userId: string): Promise<Article[]> {
-		// Verify tag exists
-		await this.findOne(tagId);
+		// Verify tag exists and belongs to user
+		await this.findOne(tagId, userId);
 
 		// Get articles with this tag that belong to the user
 		const articles = await this.articleRepository
@@ -94,8 +102,9 @@ export class TagService {
 		return articles;
 	}
 
-	async remove(id: string): Promise<void> {
-		const tag = await this.findOne(id);
+	async remove(id: string, userId: string): Promise<void> {
+		// Verify tag exists and belongs to user
+		const tag = await this.findOne(id, userId);
 
 		// Remove tag associations first (cascade should handle this)
 		await this.articleTagRepository.delete({ tagId: id });
@@ -104,9 +113,21 @@ export class TagService {
 		await this.tagRepository.remove(tag);
 	}
 
-	async addTagToArticle(articleId: string, tagId: string): Promise<void> {
-		// Verify tag exists
-		await this.findOne(tagId);
+	async addTagToArticle(articleId: string, tagId: string, userId: string): Promise<void> {
+		// Verify tag exists and belongs to user
+		await this.findOne(tagId, userId);
+
+		// Verify article exists and belongs to user
+		const article = await this.articleRepository.findOne({
+			where: { id: articleId, userId },
+		});
+
+		if (!article) {
+			throw new ForbiddenException({
+				code: ErrorCode.PERMISSION_DENIED,
+				message: 'Cannot add tag to article you don\'t own',
+			});
+		}
 
 		// Check if association already exists
 		const existing = await this.articleTagRepository.findOne({

@@ -11,7 +11,7 @@
     </div>
 
     <div v-else-if="error" class="error-container">
-      <div class="error-icon">😕</div>
+      <div class="error-icon css-icon icon-error"></div>
       <h2>{{ errorTitle }}</h2>
       <p>{{ errorMessage }}</p>
       <router-link to="/" class="home-link">返回首页</router-link>
@@ -44,7 +44,7 @@
               :disabled="isRunning || !canRun"
               @click="runCode"
             >
-              {{ isRunning ? '运行中...' : '▶ 运行' }}
+              {{ isRunning ? '运行中...' : '运行' }}
             </button>
           </div>
           <pre class="code-block"><code>{{ share.article.code }}</code></pre>
@@ -375,6 +375,7 @@ onMounted(() => {
 .error-icon {
   font-size: 48px;
   margin-bottom: 16px;
+  color: #999;
 }
 
 .error-container h2 {

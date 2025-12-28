@@ -18,7 +18,7 @@
 
         <EmptyState
           v-else-if="displayArticles.length === 0"
-          icon="📝"
+          icon="document"
           :title="selectedTagId ? '该标签下暂无笔记' : '还没有笔记'"
           :description="selectedTagId ? '尝试选择其他标签' : '点击上方按钮创建第一篇吧！'"
           :action-text="selectedTagId ? '清除筛选' : '新建笔记'"
@@ -41,17 +41,17 @@
         <p>一个随写、随存、随运行的代码笔记环境</p>
         <div class="features">
           <div class="feature">
-            <span class="feature-icon">📝</span>
+            <span class="feature-icon css-icon icon-document"></span>
             <h3>Markdown + 代码</h3>
             <p>将文章和代码统一管理</p>
           </div>
           <div class="feature">
-            <span class="feature-icon">▶️</span>
+            <span class="feature-icon css-icon icon-play"></span>
             <h3>即时运行</h3>
             <p>在浏览器中直接执行代码</p>
           </div>
           <div class="feature">
-            <span class="feature-icon">🏷️</span>
+            <span class="feature-icon css-icon icon-tag"></span>
             <h3>标签分类</h3>
             <p>智能搜索和分类管理</p>
           </div>
@@ -230,8 +230,11 @@ watch(isAuthenticated, (newVal) => {
 
 .feature-icon {
   font-size: 32px;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 12px;
+  color: var(--primary);
 }
 
 .feature h3 {

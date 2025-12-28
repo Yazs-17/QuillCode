@@ -39,7 +39,7 @@
           :title="!canExecute ? '当前模式不支持该语言执行' : ''"
           @click="runCode"
         >
-          {{ isRunning ? '运行中...' : '▶ 运行' }}
+          {{ isRunning ? '运行中...' : '运行' }}
         </button>
         <button
           class="save-btn"
@@ -118,7 +118,10 @@
             <div class="panel code-panel" :style="{ height: codeHeight + '%' }">
               <div class="panel-header">
                 <span>代码</span>
-                <span v-if="!canExecute" class="lang-warning">⚠️ 当前模式不支持执行</span>
+                <span v-if="!canExecute" class="lang-warning">
+                  <span class="warning-icon css-icon icon-warning"></span>
+                  当前模式不支持执行
+                </span>
               </div>
               <div class="panel-content">
                 <CodeEditor
@@ -751,6 +754,13 @@ onUnmounted(() => {
   margin-left: auto;
   font-size: 12px;
   color: #856404;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.warning-icon {
+  font-size: 12px;
 }
 
 .language-select option:disabled {
