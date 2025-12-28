@@ -96,14 +96,25 @@ TODO
 2. docker pull elasticsearch:8.12.2
    ```bash
    docker run -d --name es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" elasticsearch:8.12.2
-   
+   # 
+   docker start es
    ```
-
+   
+   
+   
 3. ollama llama3:8b
 
-4. mysql 8.0.39
+4. mysql 8.0.39,  执行database/init.sql, 定时任务可以采用 Windows 任务计划程序设置定时执行备份脚本 ()
 
-5. nestjs, vue3 版本均在 package中给出 
+5. nestjs, vue3,TypeORM 版本均在 package中给出 
+
+6. 给某人管理员权限： 
+   ```sql
+   USE code_notebook;
+   UPDATE users SET role = 'admin' WHERE username = 'Yazs';
+   ```
+
+7. 
 
 
 

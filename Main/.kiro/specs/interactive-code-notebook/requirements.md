@@ -105,7 +105,7 @@
 
 ### Requirement 7: 分享系统
 
-**User Story:** As a 开发者, I want 分享我的笔记给他人, so that 我可以展示我的代码和思路。
+**User Story:** As a 开发者, I want 分享我的代码片段给他人, so that 我可以展示我的代码和思路。
 
 #### Acceptance Criteria
 

@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  ConflictException,
-  UnauthorizedException,
+	Injectable,
+	ConflictException,
+	UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,109 +13,111 @@ import { ErrorCode, ErrorMessages } from '../../common';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private jwtService: JwtService,
-  ) {}
+	constructor(
+		@InjectRepository(User)
+		private userRepository: Repository<User>,
+		private jwtService: JwtService,
+	) { }
 
-  async register(registerDto: RegisterDto): Promise<{ user: Partial<User> }> {
-    const { username, email, password } = registerDto;
+	async register(registerDto: RegisterDto): Promise<{ user: Partial<User> }> {
+		const { username, email, password } = registerDto;
 
-    // Check if user exists
-    const existingUser = await this.userRepository.findOne({
-      where: [{ username }, { email }],
-    });
+		// Check if user exists
+		const existingUser = await this.userRepository.findOne({
+			where: [{ username }, { email }],
+		});
 
-    if (existingUser) {
-      throw new ConflictException({
-        code: ErrorCode.USER_EXISTS,
-        message: ErrorMessages[ErrorCode.USER_EXISTS],
-      });
-    }
+		if (existingUser) {
+			throw new ConflictException({
+				code: ErrorCode.USER_EXISTS,
+				message: ErrorMessages[ErrorCode.USER_EXISTS],
+			});
+		}
 
-    // Hash password with bcrypt
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+		// Hash password with bcrypt
+		const saltRounds = 10;
+		const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Create user
-    const user = this.userRepository.create({
-      username,
-      email,
-      passwordHash,
-    });
+		// Create user
+		const user = this.userRepository.create({
+			username,
+			email,
+			passwordHash,
+		});
 
-    await this.userRepository.save(user);
+		await this.userRepository.save(user);
 
-    return {
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        createdAt: user.createdAt,
-      },
-    };
-  }
+		return {
+			user: {
+				id: user.id,
+				username: user.username,
+				email: user.email,
+				createdAt: user.createdAt,
+			},
+		};
+	}
 
-  async login(
-    loginDto: LoginDto,
-  ): Promise<{ accessToken: string; user: Partial<User> }> {
-    const { username, password } = loginDto;
+	async login(
+		loginDto: LoginDto,
+	): Promise<{ accessToken: string; user: Partial<User> }> {
+		const { username, password } = loginDto;
 
-    // Find user by username
-    const user = await this.userRepository.findOne({
-      where: { username },
-    });
+		// Find user by username
+		const user = await this.userRepository.findOne({
+			where: { username },
+		});
 
-    if (!user) {
-      throw new UnauthorizedException({
-        code: ErrorCode.INVALID_CREDENTIALS,
-        message: ErrorMessages[ErrorCode.INVALID_CREDENTIALS],
-      });
-    }
+		if (!user) {
+			throw new UnauthorizedException({
+				code: ErrorCode.INVALID_CREDENTIALS,
+				message: ErrorMessages[ErrorCode.INVALID_CREDENTIALS],
+			});
+		}
 
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+		// Verify password
+		const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
-    if (!isPasswordValid) {
-      throw new UnauthorizedException({
-        code: ErrorCode.INVALID_CREDENTIALS,
-        message: ErrorMessages[ErrorCode.INVALID_CREDENTIALS],
-      });
-    }
+		if (!isPasswordValid) {
+			throw new UnauthorizedException({
+				code: ErrorCode.INVALID_CREDENTIALS,
+				message: ErrorMessages[ErrorCode.INVALID_CREDENTIALS],
+			});
+		}
 
-    // Generate JWT token
-    const payload = { sub: user.id, username: user.username };
-    const accessToken = this.jwtService.sign(payload);
+		// Generate JWT token
+		const payload = { sub: user.id, username: user.username };
+		const accessToken = this.jwtService.sign(payload);
 
-    return {
-      accessToken,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-      },
-    };
-  }
+		return {
+			accessToken,
+			user: {
+				id: user.id,
+				username: user.username,
+				email: user.email,
+				role: user.role,
+			},
+		};
+	}
 
-  async getProfile(userId: string): Promise<Partial<User>> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
+	async getProfile(userId: string): Promise<Partial<User>> {
+		const user = await this.userRepository.findOne({
+			where: { id: userId },
+		});
 
-    if (!user) {
-      throw new UnauthorizedException({
-        code: ErrorCode.AUTH_FAILED,
-        message: ErrorMessages[ErrorCode.AUTH_FAILED],
-      });
-    }
+		if (!user) {
+			throw new UnauthorizedException({
+				code: ErrorCode.AUTH_FAILED,
+				message: ErrorMessages[ErrorCode.AUTH_FAILED],
+			});
+		}
 
-    return {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
-  }
+		return {
+			id: user.id,
+			username: user.username,
+			email: user.email,
+			role: user.role,
+			createdAt: user.createdAt,
+			updatedAt: user.updatedAt,
+		};
+	}
 }

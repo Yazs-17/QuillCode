@@ -49,6 +49,12 @@ const routes = [
 		name: 'ShareManage',
 		component: () => import('../views/ShareManageView.vue'),
 		meta: { requiresAuth: true }
+	},
+	{
+		path: '/admin',
+		name: 'Admin',
+		component: () => import('../views/AdminView.vue'),
+		meta: { requiresAuth: true, requiresAdmin: true }
 	}
 ]
 

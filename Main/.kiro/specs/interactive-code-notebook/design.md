@@ -2,7 +2,7 @@
 
 ## Overview
 
-本设计文档描述网页互动编辑笔记系统的技术架构和实现方案。系统采用前后端分离架构，前端使用Vue 3 + Pinia + Monaco Editor，后端使用NestJS + TypeORM + PostgreSQL，支持Prod/Dev双模式运行。
+本设计文档描述网页互动编辑代码片段系统的技术架构和实现方案。系统采用前后端分离架构，前端使用Vue 3 + Pinia + Monaco Editor，后端使用NestJS + TypeORM + PostgreSQL，支持Prod/Dev双模式运行。
 
 ## Architecture
 

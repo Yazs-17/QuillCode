@@ -1,6 +1,6 @@
 @echo off
 echo =====================================================
-echo Interactive Code Notebook - MySQL 数据库初始化
+echo QuillCode - MySQL 数据库初始化
 echo =====================================================
 echo.
 

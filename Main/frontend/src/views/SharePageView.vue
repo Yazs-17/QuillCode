@@ -1,7 +1,7 @@
 <template>
   <div class="share-page-view">
     <header class="share-header">
-      <router-link to="/" class="logo">Interactive Code Notebook</router-link>
+      <router-link to="/" class="logo">QuillCode</router-link>
       <span class="share-badge">分享预览</span>
     </header>
 

@@ -20,6 +20,7 @@ import {
 	ShareModule,
 	CommentModule,
 } from './modules';
+import { AdminModule } from './modules/admin';
 
 @Module({
 	imports: [
@@ -43,8 +44,11 @@ import {
 				password: configService.get('database.password'),
 				database: configService.get('database.database'),
 				entities: [User, Article, Tag, ArticleTag, Share, Comment],
-				synchronize: configService.get('app.mode') === 'dev', // Only in dev mode
-				logging: configService.get('app.mode') === 'dev',
+				// synchronize: configService.get('app.mode') === 'dev', // Only in dev mode
+				// synchronize: true 只能同步表结构，不能处理视图/存储过程/触发器, 且它可能会和手动创建的表结构冲突
+				synchronize: false,
+				// logging: configService.get('app.mode') === 'dev',
+				logging: configService.get('app.mode') === 'dev' ? ['error', 'warn'] : false,
 				charset: 'utf8mb4',
 			}),
 			inject: [ConfigService],
@@ -56,6 +60,7 @@ import {
 		SearchModule,
 		ShareModule,
 		CommentModule,
+		AdminModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

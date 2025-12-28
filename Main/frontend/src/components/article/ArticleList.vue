@@ -1,9 +1,9 @@
 <template>
   <div class="article-list">
     <div class="list-header">
-      <h2>我的笔记</h2>
+      <h2>我的片段</h2>
       <button class="create-btn" @click="handleCreate">
-        + 新建笔记
+        + 新建片段
       </button>
     </div>
 
