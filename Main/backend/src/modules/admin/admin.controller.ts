@@ -6,35 +6,43 @@ import {
 	Param,
 	UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminGuard } from './guards/admin.guard';
 import { AdminService } from './admin.service';
 
+@ApiTags('admin')
 @Controller('admin')
 @UseGuards(AuthGuard('jwt'), AdminGuard)
+@ApiBearerAuth('JWT-auth')
 export class AdminController {
 	constructor(private readonly adminService: AdminService) { }
 
-	// 获取全站统计
 	@Get('stats')
+	@ApiOperation({ summary: '全站统计', description: '获取全站统计数据' })
 	async getSiteStats() {
 		return this.adminService.getSiteStats();
 	}
 
-	// 【视图】获取所有用户统计（使用 v_user_statistics）
 	@Get('users/statistics')
+	@ApiOperation({ summary: '用户统计列表', description: '使用视图 v_user_statistics 获取所有用户统计' })
 	async getUserStatistics() {
 		return this.adminService.getUserStatistics();
 	}
 
-	// 【存储过程】获取指定用户统计（使用 sp_get_user_stats）
 	@Get('users/:id/stats')
+	@ApiOperation({ summary: '指定用户统计', description: '使用存储过程 sp_get_user_stats 获取指定用户统计' })
+	@ApiParam({ name: 'id', description: '用户ID' })
 	async getUserStatsById(@Param('id') userId: string) {
 		return this.adminService.getUserStatsById(userId);
 	}
 
-	// 【存储过程】获取用户文章列表（使用 sp_get_user_articles）
 	@Get('users/:id/articles')
+	@ApiOperation({ summary: '用户文章列表', description: '使用存储过程 sp_get_user_articles 获取用户文章' })
+	@ApiParam({ name: 'id', description: '用户ID' })
+	@ApiQuery({ name: 'page', required: false, description: '页码' })
+	@ApiQuery({ name: 'pageSize', required: false, description: '每页数量' })
+	@ApiQuery({ name: 'type', required: false, description: '文章类型' })
 	async getUserArticles(
 		@Param('id') userId: string,
 		@Query('page') page?: string,
@@ -49,20 +57,24 @@ export class AdminController {
 		);
 	}
 
-	// 【视图】获取热门标签（使用 v_popular_tags）
 	@Get('tags/popular')
+	@ApiOperation({ summary: '热门标签', description: '使用视图 v_popular_tags 获取热门标签' })
+	@ApiQuery({ name: 'limit', required: false, description: '返回数量限制' })
 	async getPopularTags(@Query('limit') limit?: string) {
 		return this.adminService.getPopularTags(limit ? parseInt(limit) : 20);
 	}
 
-	// 【视图】获取文章详情列表（使用 v_article_details）
 	@Get('articles/details')
+	@ApiOperation({ summary: '文章详情列表', description: '使用视图 v_article_details 获取文章详情' })
+	@ApiQuery({ name: 'limit', required: false, description: '返回数量限制' })
 	async getArticleDetails(@Query('limit') limit?: string) {
 		return this.adminService.getArticleDetails(limit ? parseInt(limit) : 50);
 	}
 
-	// 获取操作日志（触发器自动记录）
 	@Get('logs')
+	@ApiOperation({ summary: '操作日志', description: '获取触发器自动记录的操作日志' })
+	@ApiQuery({ name: 'page', required: false, description: '页码' })
+	@ApiQuery({ name: 'pageSize', required: false, description: '每页数量' })
 	async getOperationLogs(
 		@Query('page') page?: string,
 		@Query('pageSize') pageSize?: string,
@@ -73,8 +85,8 @@ export class AdminController {
 		);
 	}
 
-	// 【存储过程】清理过期分享（使用 sp_cleanup_expired_shares）
 	@Post('cleanup/shares')
+	@ApiOperation({ summary: '清理过期分享', description: '使用存储过程 sp_cleanup_expired_shares 清理过期分享' })
 	async cleanupExpiredShares() {
 		return this.adminService.cleanupExpiredShares();
 	}

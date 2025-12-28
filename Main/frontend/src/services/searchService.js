@@ -11,5 +11,10 @@ export const searchService = {
 
 	async getRecommendations (articleId) {
 		return api.get(`/search/recommend`, { params: { articleId } })
+	},
+
+	// 重建当前用户的搜索索引
+	async reindex () {
+		return api.get('/search/reindex')
 	}
 }

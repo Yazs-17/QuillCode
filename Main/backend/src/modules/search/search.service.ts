@@ -237,23 +237,28 @@ export class SearchService implements OnModuleInit {
 	}
 
 	async reindexUserArticles(userId: string): Promise<number> {
+		this.logger.log(`Starting reindex for user: ${userId}`);
+
 		if (!this.isConnected) {
 			this.logger.warn('Elasticsearch not connected, cannot reindex');
 			return 0;
 		}
 
 		try {
+			this.logger.log(`Querying articles for user: ${userId}`);
 			const articles = await this.articleRepository.find({
 				where: { userId },
 				relations: ['articleTags', 'articleTags.tag'],
 			});
 
-			this.logger.log(`Reindexing ${articles.length} articles for user ${userId}`);
+			this.logger.log(`Found ${articles.length} articles for user ${userId}`);
 
 			for (const article of articles) {
+				this.logger.log(`Indexing article: ${article.id} - ${article.title}`);
 				await this.indexArticle(article);
 			}
 
+			this.logger.log(`Reindex completed: ${articles.length} articles indexed`);
 			return articles.length;
 		} catch (error) {
 			this.logger.error('Reindex failed', error);

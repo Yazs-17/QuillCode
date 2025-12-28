@@ -385,6 +385,7 @@ onMounted(async () => {
 		return
 	}
 
+	// 并行加载所有数据
 	await Promise.all([
 		adminStore.fetchSiteStats(),
 		adminStore.fetchUserStatistics(),
@@ -674,6 +675,7 @@ onMounted(async () => {
 .maintenance-actions {
 	display: flex;
 	gap: 12px;
+	margin-top: 12px;
 }
 
 .action-btn {
@@ -684,8 +686,12 @@ onMounted(async () => {
 	color: white;
 }
 
+.action-btn.secondary {
+	background: #6c757d;
+}
+
 .action-btn:hover {
-	background: var(--primary-hover);
+	opacity: 0.9;
 }
 
 .action-btn:disabled {
