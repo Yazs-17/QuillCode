@@ -27,7 +27,8 @@
 			<div class="search-results">
 				<LoadingState v-if="loading" text="正在搜索..." />
 
-				<EmptyState v-else-if="searched && results.length === 0" icon="search" title="未找到匹配的文章" description="尝试使用不同的关键词" />
+				<EmptyState v-else-if="searched && results.length === 0" icon="search" title="未找到匹配的文章"
+					description="尝试使用不同的关键词" />
 
 				<div v-else-if="results.length > 0" class="results-list">
 					<p class="results-count">找到 {{ results.length }} 篇相关文章</p>
@@ -54,7 +55,7 @@
 				</div>
 
 				<div v-else class="search-hint">
-					<p>输入关键词搜索您的代码笔记</p>
+					<p>输入关键词搜索您的 Quills</p>
 					<ul>
 						<li>支持标题、内容、代码搜索</li>
 						<li>支持标签筛选</li>
@@ -88,7 +89,7 @@ const reindexing = ref(false)
 
 const typeLabels = {
 	algorithm: '算法',
-	snippet: '代码片段',
+	snippet: 'Quill',
 	html: 'HTML/Vue'
 }
 

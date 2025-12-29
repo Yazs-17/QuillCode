@@ -69,7 +69,7 @@
 							<span class="type-count">{{ siteStats?.articlesByType?.algorithm || 0 }}</span>
 						</div>
 						<div class="type-item">
-							<span class="type-label"><span class="type-icon css-icon icon-code"></span> 代码片段</span>
+							<span class="type-label"><span class="type-icon css-icon icon-code"></span> Quill</span>
 							<div class="type-bar">
 								<div class="type-fill snippet" :style="{ width: getTypePercent('snippet') + '%' }"></div>
 							</div>
@@ -87,7 +87,8 @@
 
 				<!-- 热门标签（视图 v_popular_tags） -->
 				<section class="stats-section">
-					<h3><span class="section-icon css-icon icon-tag"></span> 热门标签 TOP 10 <span class="db-badge">视图: v_popular_tags</span></h3>
+					<h3><span class="section-icon css-icon icon-tag"></span> 热门标签 TOP 10 <span class="db-badge">视图:
+							v_popular_tags</span></h3>
 					<div class="tags-list">
 						<div v-for="(tag, index) in popularTags.slice(0, 10)" :key="tag.tagId" class="tag-item">
 							<span class="tag-rank">#{{ index + 1 }}</span>
@@ -100,7 +101,8 @@
 
 				<!-- 用户统计（视图 v_user_statistics） -->
 				<section class="stats-section">
-					<h3><span class="section-icon css-icon icon-users"></span> 用户统计 <span class="db-badge">视图: v_user_statistics</span></h3>
+					<h3><span class="section-icon css-icon icon-users"></span> 用户统计 <span class="db-badge">视图:
+							v_user_statistics</span></h3>
 					<div class="table-container">
 						<table class="stats-table">
 							<thead>
@@ -109,7 +111,7 @@
 									<th>邮箱</th>
 									<th>文章数</th>
 									<th>算法</th>
-									<th>片段</th>
+									<th>Quill</th>
 									<th>HTML</th>
 									<th>分享数</th>
 									<th>注册时间</th>
@@ -140,7 +142,8 @@
 
 				<!-- 文章详情列表（视图 v_article_details） -->
 				<section class="stats-section">
-					<h3><span class="section-icon css-icon icon-document"></span> 文章详情列表 <span class="db-badge">视图: v_article_details</span></h3>
+					<h3><span class="section-icon css-icon icon-document"></span> 文章详情列表 <span class="db-badge">视图:
+							v_article_details</span></h3>
 					<div class="table-container">
 						<table class="stats-table">
 							<thead>
@@ -218,7 +221,8 @@
 
 				<!-- 维护操作 -->
 				<section class="stats-section">
-					<h3><span class="section-icon css-icon icon-settings"></span> 维护操作 <span class="db-badge">存储过程: sp_cleanup_expired_shares</span></h3>
+					<h3><span class="section-icon css-icon icon-settings"></span> 维护操作 <span class="db-badge">存储过程:
+							sp_cleanup_expired_shares</span></h3>
 					<div class="maintenance-actions">
 						<button class="action-btn" @click="handleCleanup" :disabled="cleaning">
 							<span class="btn-icon css-icon icon-trash"></span>
@@ -324,7 +328,7 @@ function getTypePercent (type) {
 }
 
 function getTypeName (type) {
-	const names = { algorithm: '算法', snippet: '片段', html: 'HTML' }
+	const names = { algorithm: '算法', snippet: 'Quill', html: 'HTML' }
 	return names[type] || type
 }
 

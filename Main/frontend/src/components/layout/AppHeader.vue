@@ -65,7 +65,7 @@ function isActive (name) {
 				← 返回
 			</button>
 			<router-link v-else to="/" class="logo">
-				<span class="logo-icon css-icon icon-quill"></span>
+				<img src="/favicon.ico" alt="QuillCode" class="logo-icon" />
 				<span class="logo-text">{{ title }}</span>
 			</router-link>
 
@@ -76,7 +76,7 @@ function isActive (name) {
 		<nav v-if="showNav && isAuthenticated" class="header-nav">
 			<router-link to="/" class="nav-link" :class="{ active: isActive('Home') }">
 				<span class="nav-icon css-icon icon-document"></span>
-				<span class="nav-text">片段</span>
+				<span class="nav-text">Quills</span>
 			</router-link>
 			<router-link to="/search" class="nav-link" :class="{ active: isActive('Search') }">
 				<span class="nav-icon css-icon icon-search"></span>
@@ -153,7 +153,9 @@ function isActive (name) {
 }
 
 .logo-icon {
-	font-size: 24px;
+	width: 24px;
+	height: 24px;
+	object-fit: contain;
 }
 
 .logo-text {
