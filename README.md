@@ -1,67 +1,24 @@
 [TOC]
 
-## General Introduction
+## 项目概述
 
-As the description, this project is used for making mini tutorials with interactive functions, and I'd like to use my own toolkit to make it!
-
-## Tasks split
-
-#### 前端逻辑
-
-- [x] 页面基本布局
-- [x] 滑动控制台
-- [x] 实时渲染
-- [x] 执行代码（先`New Function`，先支持JS/ TS，后续会用Docker 沙箱， 支持一种编译型语言）
-  - [x] 以上的页面嵌入工作正在进行中。
-  - [x] 逻辑优化的点
-    - 当用户从JS 切到HTML的时候，控制台应该隐藏（？）
-    - 当HTML 切到JS，实时渲染应该隐藏（应该默认会显示一个控制台）
-- [x] 实现实时预览指定文件夹下的markdown files
-- [ ] 先用express写一下后端思路
-- [ ] 文章修改系统
-- [ ] markdown 上传，文件展示与懒加载
-- [ ] 用Vue pinia 同步“当前文件名、内容、保存状态”
-- [ ] 单体 JWT ，保存唯一状态
-- [ ] 文章Vim式 快捷在线编辑
-- [ ] Pinia 管理主程序状态
-- [ ] 统一管理错误码
-- [ ] 代理前端代码执行逻辑（两种模式：worker / Docker）
-- [ ] 文章需要有标签系统（对应管理系统，便利es和rag）
-
-
-#### 后端逻辑
-
-由于本项目偏向于单点式的用户产品，用户交互甚至只有一个评论交互（？maybe）
-
-
-
-- [ ] 个人JWT令牌式验证？
-- [ ] 分享与评论系统，（过期时间，评论curd）
-- [ ] 文章与标题curd
-- [ ] 搜索，rag+es优化
-
-
+QuillCode 是一个面向程序员的在线代码笔记系统，旨在提供一个"随写、随存、随运行"的代码学习与管理环境。系统支持 Markdown 文档编写、多语言代码编辑与在线执行、标签分类管理、智能文章关联与推荐、文章分享与评论等功能。
+"Quill" 一词源自英文中的"羽毛笔"，象征着书写与创作。在 QuillCode 中，每一篇代码笔记都被称为一个 "Quill"，寓意用户用代码书写自己的技术成长之路。
 
 
 ## Functions
 
 1. 未来功能前瞻：
    - 文件上传（包含教程markdown file、standard code file），markdown file 实时渲染
-   - code real-time preview 
    - add console 调试功能
    - AI语义知识库加入，AI智能筛选
-   - 管理后台，用户登陆功能，java( spring boot ) 
-   - 评论系统，分享自己的代码库文章，将会在文章后面载入评论系统
+   - 管理后台重做并独立出来
+	 - 强化AI推荐，优化es检索（考虑加入AI推荐流）
    - Github发布形式
      - 源码开源
-     - 发布两个版本
-       - 版本一，直接能用，仅前端，这个会发到我的个人服务器上（代码沙箱部分仅采用Web Worker）
-       - 版本二，自己在本地部署，包括代码沙箱之类的，到时可能会加electron出release版本
+     - QuillCode 更加倾向于在线试用，对试用者（需要登录注册）可以下载软件（跳转到github releases 页面下载），开源软件，是一款 electron 软件
    
 2. 阶段性任务
-   - 完成前期基本功能的开发，业务跑通先
-   
-   - 然后美化界面，完善用户交互，优化UI逻辑等等
    
    - 宣传一下自己做的小玩具
    
@@ -71,7 +28,7 @@ As the description, this project is used for making mini tutorials with interact
 
 ## Some Tools
 
-Vue (frontend) & java springboot (H5 , mongodb or mysql)(or go gin or express) & minidatabase(sqlite and so on )
+Vue (frontend) & Nest.js (backend) & TypeROM
 
 ## Start
 
@@ -115,16 +72,3 @@ TODO
    ```
 
 7. 
-
-
-
-
-## if you ?
-
-如果你想用原生手写，你只需要做到：
-1. 引入 marked.js/showdown.js & highlight.js -> 原因不言而喻
-2. 手写iframe通信机制（postMessage） -> 安全的代码与运行沙箱
-3. 数据响应更新系统（reactivity system） -> 自动更新预览
-4. 模块化组件（`<template>` & JS 动态clone & Web Components） -> 不言而喻
-5. 状态管理 （event bus/observer）-> 不言而喻
-6. 强大的组织能力和赤石精神
