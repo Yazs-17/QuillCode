@@ -1,0 +1,90 @@
+# QuillCode AI-Enhanced Mode - 带本地 AI 的部署配置
+# 包含 App + SQLite + Ollama
+# 适用于需要本地 AI 功能的部署场景
+
+services:
+  # 后端服务 (SQLite 模式 + Ollama AI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: quillcode-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - APP_MODE=prod
+      - PORT=3000
+      # SQLite 配置
+      - DB_TYPE=sqlite
+      - DB_DATABASE=/app/data/quillcode.db
+      # JWT 配置
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-change-in-production}
+      - JWT_EXPIRES_IN=7d
+      # 单用户模式（本地版默认免密）
+      - SINGLE_USER_MODE=true
+      - AUTH_REQUIRED=false
+      # Ollama AI 配置
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3:8b}
+    ports:
+      - "3000:3000"
+    volumes:
+      # SQLite 数据持久化
+      - quillcode_data:/app/data
+    depends_on:
+      ollama:
+        condition: service_started
+    networks:
+      - quillcode-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: quillcode-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - quillcode-network
+
+  # Ollama AI 服务
+  ollama:
+    image: ollama/ollama:latest
+    container_name: quillcode-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      # Ollama 模型持久化
+      - ollama_data:/root/.ollama
+    networks:
+      - quillcode-network
+    # GPU 支持（可选，如果没有 GPU 会自动使用 CPU）
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  quillcode_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  quillcode-network:
+    driver: bridge

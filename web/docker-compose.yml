@@ -1,0 +1,110 @@
+# QuillCode Web 版 - 在线多用户部署
+# MySQL + ElasticSearch + 可选 Ollama AI
+# 适用于在线服务部署
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: quillcode-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-sjblp}
+      MYSQL_DATABASE: ${DB_DATABASE:-code_notebook}
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - quillcode-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-sjblp}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Elasticsearch 搜索引擎
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: quillcode-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - quillcode-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q 'green\\|yellow'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: quillcode-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - APP_MODE=prod
+      - PORT=3000
+      # MySQL 配置
+      - DB_TYPE=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=${DB_PASSWORD:-sjblp}
+      - DB_DATABASE=${DB_DATABASE:-code_notebook}
+      # JWT 配置
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-change-in-production}
+      - JWT_EXPIRES_IN=7d
+      # ElasticSearch 配置
+      - ELASTICSEARCH_NODE=http://elasticsearch:9200
+      # 多用户模式
+      - SINGLE_USER_MODE=false
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - quillcode-network
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_MODE=online
+    container_name: quillcode-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - quillcode-network
+
+volumes:
+  mysql_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+
+networks:
+  quillcode-network:
+    driver: bridge

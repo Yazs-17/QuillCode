@@ -1,0 +1,6 @@
+# Placeholder for Electron app icons
+# Required icon files:
+# - icon.png (512x512 for general use)
+# - icon.ico (Windows)
+# - icon.icns (macOS)
+# - icons/ directory with various sizes for Linux (16x16, 32x32, 48x48, 64x64, 128x128, 256x256, 512x512)

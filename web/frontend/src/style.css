@@ -1,0 +1,435 @@
+:root {
+	--zong: #b7ae8f;
+	--qin: #0ff;
+	--zi: #f0f;
+	--hei: #0a0a0f;
+	--lv: #7cff00;
+	--text: #e0e0f8;
+	--hui: #ddd;
+	--bai: #fff;
+	--danhui: #f9f9f9;
+	--hei: #000;
+}
+
+/* ========================================
+   Professional Icon System
+   ======================================== */
+
+/* Base icon styles */
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1em;
+	height: 1em;
+	vertical-align: middle;
+}
+
+.icon svg {
+	width: 100%;
+	height: 100%;
+	fill: currentColor;
+}
+
+/* Icon sizes */
+.icon-sm {
+	font-size: 14px;
+}
+
+.icon-md {
+	font-size: 18px;
+}
+
+.icon-lg {
+	font-size: 24px;
+}
+
+.icon-xl {
+	font-size: 32px;
+}
+
+.icon-2xl {
+	font-size: 48px;
+}
+
+/* CSS-based icons using pseudo-elements */
+.css-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1em;
+	height: 1em;
+	position: relative;
+}
+
+/* Document/Note icon */
+.icon-document::before {
+	content: '';
+	width: 0.7em;
+	height: 0.85em;
+	border: 2px solid currentColor;
+	border-radius: 2px;
+	position: relative;
+}
+
+.icon-document::after {
+	content: '';
+	position: absolute;
+	top: 0.35em;
+	left: 0.25em;
+	width: 0.4em;
+	height: 2px;
+	background: currentColor;
+	box-shadow: 0 0.15em 0 currentColor, 0 0.3em 0 currentColor;
+}
+
+/* Search icon */
+.icon-search::before {
+	content: '';
+	width: 0.5em;
+	height: 0.5em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+}
+
+.icon-search::after {
+	content: '';
+	position: absolute;
+	width: 2px;
+	height: 0.3em;
+	background: currentColor;
+	transform: rotate(-45deg);
+	bottom: 0.1em;
+	right: 0.15em;
+}
+
+/* Link/Share icon */
+.icon-link::before {
+	content: '';
+	width: 0.35em;
+	height: 0.35em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	position: absolute;
+	top: 0.1em;
+	left: 0.1em;
+}
+
+.icon-link::after {
+	content: '';
+	width: 0.35em;
+	height: 0.35em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	position: absolute;
+	bottom: 0.1em;
+	right: 0.1em;
+}
+
+/* Chart/Stats icon */
+.icon-chart::before {
+	content: '';
+	width: 0.8em;
+	height: 0.7em;
+	border-left: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+}
+
+.icon-chart::after {
+	content: '';
+	position: absolute;
+	bottom: 0.15em;
+	left: 0.2em;
+	width: 0.15em;
+	height: 0.25em;
+	background: currentColor;
+	box-shadow: 0.2em 0 0 currentColor, 0.4em -0.15em 0 currentColor;
+}
+
+/* Tag icon */
+.icon-tag::before {
+	content: '';
+	width: 0.7em;
+	height: 0.5em;
+	border: 2px solid currentColor;
+	border-radius: 2px 0.25em 0.25em 2px;
+	border-left-width: 0;
+	position: relative;
+}
+
+.icon-tag::after {
+	content: '';
+	position: absolute;
+	left: 0.15em;
+	width: 0;
+	height: 0;
+	border: 0.25em solid transparent;
+	border-right-color: currentColor;
+}
+
+/* User/Users icon */
+.icon-users::before {
+	content: '';
+	width: 0.4em;
+	height: 0.4em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	position: absolute;
+	top: 0.05em;
+}
+
+.icon-users::after {
+	content: '';
+	width: 0.6em;
+	height: 0.3em;
+	border: 2px solid currentColor;
+	border-bottom: none;
+	border-radius: 0.3em 0.3em 0 0;
+	position: absolute;
+	bottom: 0.1em;
+}
+
+/* Comment/Chat icon */
+.icon-comment::before {
+	content: '';
+	width: 0.75em;
+	height: 0.55em;
+	border: 2px solid currentColor;
+	border-radius: 4px;
+}
+
+.icon-comment::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0.2em;
+	width: 0;
+	height: 0;
+	border: 0.15em solid transparent;
+	border-top-color: currentColor;
+	border-right-color: currentColor;
+}
+
+/* Trending/Growth icon */
+.icon-trending::before {
+	content: '';
+	width: 0.7em;
+	height: 0.5em;
+	border-left: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+}
+
+.icon-trending::after {
+	content: '';
+	position: absolute;
+	width: 0.5em;
+	height: 2px;
+	background: currentColor;
+	transform: rotate(-30deg);
+	top: 0.25em;
+	right: 0.1em;
+}
+
+/* Algorithm/Calculator icon */
+.icon-algorithm::before {
+	content: '';
+	width: 0.7em;
+	height: 0.8em;
+	border: 2px solid currentColor;
+	border-radius: 3px;
+}
+
+.icon-algorithm::after {
+	content: '';
+	position: absolute;
+	top: 0.2em;
+	width: 0.4em;
+	height: 0.15em;
+	background: currentColor;
+	box-shadow: 0 0.2em 0 currentColor;
+}
+
+/* Code/Snippet icon */
+.icon-code::before {
+	content: '<>';
+	font-family: monospace;
+	font-size: 0.7em;
+	font-weight: bold;
+}
+
+/* Globe/Web icon */
+.icon-globe::before {
+	content: '';
+	width: 0.7em;
+	height: 0.7em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+}
+
+.icon-globe::after {
+	content: '';
+	position: absolute;
+	width: 0.7em;
+	height: 0.35em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	border-top: none;
+	border-bottom: none;
+}
+
+/* Refresh/Sync icon */
+.icon-refresh::before {
+	content: '';
+	width: 0.6em;
+	height: 0.6em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	border-right-color: transparent;
+}
+
+.icon-refresh::after {
+	content: '';
+	position: absolute;
+	top: 0.05em;
+	right: 0.1em;
+	width: 0;
+	height: 0;
+	border: 0.12em solid transparent;
+	border-bottom-color: currentColor;
+	border-left-color: currentColor;
+}
+
+/* Trash/Delete icon */
+.icon-trash::before {
+	content: '';
+	width: 0.5em;
+	height: 0.6em;
+	border: 2px solid currentColor;
+	border-top: none;
+	border-radius: 0 0 3px 3px;
+	position: absolute;
+	bottom: 0.1em;
+}
+
+.icon-trash::after {
+	content: '';
+	width: 0.7em;
+	height: 2px;
+	background: currentColor;
+	position: absolute;
+	top: 0.15em;
+}
+
+/* Settings/Wrench icon */
+.icon-settings::before {
+	content: '';
+	width: 0.5em;
+	height: 0.5em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+}
+
+.icon-settings::after {
+	content: '';
+	position: absolute;
+	width: 0.15em;
+	height: 0.15em;
+	background: currentColor;
+	box-shadow:
+		0 -0.35em 0 currentColor,
+		0 0.35em 0 currentColor,
+		0.35em 0 0 currentColor,
+		-0.35em 0 0 currentColor;
+}
+
+/* Warning icon */
+.icon-warning::before {
+	content: '';
+	width: 0;
+	height: 0;
+	border-left: 0.4em solid transparent;
+	border-right: 0.4em solid transparent;
+	border-bottom: 0.7em solid currentColor;
+}
+
+.icon-warning::after {
+	content: '!';
+	position: absolute;
+	font-size: 0.4em;
+	font-weight: bold;
+	bottom: 0.3em;
+	color: var(--bai, #fff);
+}
+
+/* Play icon */
+.icon-play::before {
+	content: '';
+	width: 0;
+	height: 0;
+	border-top: 0.35em solid transparent;
+	border-bottom: 0.35em solid transparent;
+	border-left: 0.5em solid currentColor;
+	margin-left: 0.1em;
+}
+
+/* Empty/Inbox icon */
+.icon-empty::before {
+	content: '';
+	width: 0.7em;
+	height: 0.5em;
+	border: 2px solid currentColor;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+}
+
+.icon-empty::after {
+	content: '';
+	width: 0.9em;
+	height: 2px;
+	background: currentColor;
+	position: absolute;
+	top: 0.2em;
+}
+
+/* Error/Sad face icon */
+.icon-error::before {
+	content: '';
+	width: 0.7em;
+	height: 0.7em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+}
+
+.icon-error::after {
+	content: '';
+	position: absolute;
+	width: 0.3em;
+	height: 0.15em;
+	border: 2px solid currentColor;
+	border-top: none;
+	border-radius: 0 0 50% 50%;
+	bottom: 0.2em;
+}
+
+/* Feather/Quill icon for logo */
+.icon-quill::before {
+	content: '';
+	width: 0.15em;
+	height: 0.7em;
+	background: currentColor;
+	border-radius: 0.1em;
+	transform: rotate(-30deg);
+}
+
+.icon-quill::after {
+	content: '';
+	position: absolute;
+	width: 0.4em;
+	height: 0.5em;
+	border: 2px solid currentColor;
+	border-left: none;
+	border-radius: 0 50% 50% 0;
+	transform: rotate(-30deg);
+	left: 0.15em;
+	top: 0.05em;
+}

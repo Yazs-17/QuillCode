@@ -1,0 +1,61 @@
+# QuillCode Lite Mode - 轻量化部署配置
+# 仅包含 App + SQLite，无需 MySQL/ElasticSearch
+# 适用于个人使用和低配置服务器
+
+services:
+  # 后端服务 (SQLite 模式)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: quillcode-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - APP_MODE=prod
+      - PORT=3000
+      # SQLite 配置
+      - DB_TYPE=sqlite
+      - DB_DATABASE=/app/data/quillcode.db
+      # JWT 配置
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-change-in-production}
+      - JWT_EXPIRES_IN=7d
+      # 单用户模式（本地版默认免密）
+      - SINGLE_USER_MODE=true
+      - AUTH_REQUIRED=false
+    ports:
+      - "3000:3000"
+    volumes:
+      # SQLite 数据持久化
+      - quillcode_data:/app/data
+    networks:
+      - quillcode-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: quillcode-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - quillcode-network
+
+volumes:
+  quillcode_data:
+    driver: local
+
+networks:
+  quillcode-network:
+    driver: bridge

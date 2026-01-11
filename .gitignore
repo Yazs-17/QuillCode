@@ -12,6 +12,7 @@ build/
 
 # IDE
 .idea/
+.kiro
 *.swp
 *.swo
 
