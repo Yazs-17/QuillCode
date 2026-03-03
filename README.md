@@ -1,3 +1,17 @@
+# TODO
+
+需要重构代码架构
+
+需要把插件系统架构加入,把 整个Quill Code 改造为 core 中的一个插件
+
+需要插入在线协作 websocket/diff online 等
+
+需要加入yazs flow
+
+
+
+
+
 [TOC]
 
 ## 项目概述
