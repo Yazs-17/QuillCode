@@ -80,7 +80,8 @@ export class ExecutorService {
       throw new HttpException(
         {
           code: ErrorCode.EXEC_ERROR,
-          message: error instanceof Error ? error.message : 'Unknown execution error',
+          message:
+            error instanceof Error ? error.message : 'Unknown execution error',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

@@ -26,7 +26,7 @@ export class SandboxExecutor {
 
     try {
       const result = await this.executeInSandbox(executableCode, logs);
-      
+
       return {
         success: true,
         output: this.formatOutput(logs, result),
@@ -35,9 +35,10 @@ export class SandboxExecutor {
         logs,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
-      
+
       logs.push({
         type: 'error',
         text: errorStack || errorMessage,
@@ -142,7 +143,9 @@ export class SandboxExecutor {
   private createTimeout(): Promise<never> {
     return new Promise((_, reject) => {
       setTimeout(() => {
-        reject(new Error(`Execution timeout: exceeded ${this.TIMEOUT_MS}ms limit`));
+        reject(
+          new Error(`Execution timeout: exceeded ${this.TIMEOUT_MS}ms limit`),
+        );
       }, this.TIMEOUT_MS);
     });
   }
@@ -151,9 +154,14 @@ export class SandboxExecutor {
     const outputLines: string[] = [];
 
     for (const log of logs) {
-      const prefix = log.type === 'error' ? '[ERROR] ' : 
-                     log.type === 'warn' ? '[WARN] ' : 
-                     log.type === 'info' ? '[INFO] ' : '';
+      const prefix =
+        log.type === 'error'
+          ? '[ERROR] '
+          : log.type === 'warn'
+            ? '[WARN] '
+            : log.type === 'info'
+              ? '[INFO] '
+              : '';
       outputLines.push(`${prefix}${log.text}`);
     }
 

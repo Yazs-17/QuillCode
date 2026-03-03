@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
 import { ExecutorService } from './executor.service';
 import { ExecuteCodeDto, ExecutionResult } from './dto';
 import { JwtAuthGuard } from '../../common';
@@ -15,7 +9,9 @@ export class ExecutorController {
 
   @Post('run')
   @UseGuards(JwtAuthGuard)
-  async execute(@Body() executeCodeDto: ExecuteCodeDto): Promise<ExecutionResult> {
+  async execute(
+    @Body() executeCodeDto: ExecuteCodeDto,
+  ): Promise<ExecutionResult> {
     return this.executorService.execute(executeCodeDto);
   }
 

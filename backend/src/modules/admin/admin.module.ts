@@ -5,9 +5,9 @@ import { AdminService } from './admin.service';
 import { User, Article, Tag, Share, Comment } from '../../entities';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User, Article, Tag, Share, Comment])],
-	controllers: [AdminController],
-	providers: [AdminService],
-	exports: [AdminService],
+  imports: [TypeOrmModule.forFeature([User, Article, Tag, Share, Comment])],
+  controllers: [AdminController],
+  providers: [AdminService],
+  exports: [AdminService],
 })
-export class AdminModule { }
+export class AdminModule {}

@@ -7,9 +7,9 @@ import { Article, ArticleTag } from '../../entities';
 
 @Global()
 @Module({
-	imports: [TypeOrmModule.forFeature([Article, ArticleTag])],
-	controllers: [SearchController],
-	providers: [SearchService, RecommendService],
-	exports: [SearchService, RecommendService],
+  imports: [TypeOrmModule.forFeature([Article, ArticleTag])],
+  controllers: [SearchController],
+  providers: [SearchService, RecommendService],
+  exports: [SearchService, RecommendService],
 })
-export class SearchModule { }
+export class SearchModule {}

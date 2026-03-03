@@ -35,7 +35,11 @@ export class DockerExecutor {
     },
     java: {
       image: 'openjdk:17-alpine',
-      command: (code: string) => ['sh', '-c', `echo '${this.escapeShell(code)}' > Main.java && javac Main.java && java Main`],
+      command: (code: string) => [
+        'sh',
+        '-c',
+        `echo '${this.escapeShell(code)}' > Main.java && javac Main.java && java Main`,
+      ],
       fileExtension: 'java',
     },
   };
@@ -100,18 +104,24 @@ export class DockerExecutor {
 
       // Wait for container with timeout
       const waitPromise = container.wait();
-      const timeoutPromise = new Promise<{ StatusCode: number }>((_, reject) => {
-        setTimeout(async () => {
-          try {
-            if (container) {
-              await container.kill();
+      const timeoutPromise = new Promise<{ StatusCode: number }>(
+        (_, reject) => {
+          setTimeout(async () => {
+            try {
+              if (container) {
+                await container.kill();
+              }
+            } catch {
+              // Container might have already stopped
             }
-          } catch {
-            // Container might have already stopped
-          }
-          reject(new Error(`Execution timeout: exceeded ${this.TIMEOUT_MS}ms limit`));
-        }, this.TIMEOUT_MS);
-      });
+            reject(
+              new Error(
+                `Execution timeout: exceeded ${this.TIMEOUT_MS}ms limit`,
+              ),
+            );
+          }, this.TIMEOUT_MS);
+        },
+      );
 
       const result = await Promise.race([waitPromise, timeoutPromise]);
 
@@ -146,12 +156,15 @@ export class DockerExecutor {
       return {
         success,
         output: this.formatOutput(logs),
-        error: success ? null : stderr || `Process exited with code ${result.StatusCode}`,
+        error: success
+          ? null
+          : stderr || `Process exited with code ${result.StatusCode}`,
         executionTime: Date.now() - startTime,
         logs,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       this.logger.error(`Docker execution error: ${errorMessage}`);
 
@@ -180,7 +193,6 @@ export class DockerExecutor {
     }
   }
 
-
   private async ensureImage(imageName: string): Promise<void> {
     try {
       await this.docker.getImage(imageName).inspect();
@@ -189,13 +201,10 @@ export class DockerExecutor {
       this.logger.log(`Pulling image ${imageName}...`);
       const stream = await this.docker.pull(imageName);
       await new Promise<void>((resolve, reject) => {
-        this.docker.modem.followProgress(
-          stream,
-          (err: Error | null) => {
-            if (err) reject(err);
-            else resolve();
-          },
-        );
+        this.docker.modem.followProgress(stream, (err: Error | null) => {
+          if (err) reject(err);
+          else resolve();
+        });
       });
       this.logger.log(`Image ${imageName} pulled successfully`);
     }

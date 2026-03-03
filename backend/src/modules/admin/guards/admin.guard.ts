@@ -1,21 +1,21 @@
 import {
-	Injectable,
-	CanActivate,
-	ExecutionContext,
-	ForbiddenException,
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserRole } from '../../../entities/user.entity';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-	canActivate(context: ExecutionContext): boolean {
-		const request = context.switchToHttp().getRequest();
-		const user = request.user;
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
 
-		if (!user || user.role !== UserRole.ADMIN) {
-			throw new ForbiddenException('仅管理员可访问');
-		}
+    if (!user || user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('仅管理员可访问');
+    }
 
-		return true;
-	}
+    return true;
+  }
 }

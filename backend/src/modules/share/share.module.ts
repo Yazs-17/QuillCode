@@ -5,9 +5,9 @@ import { ShareService } from './share.service';
 import { Share, Article } from '../../entities';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Share, Article])],
-	controllers: [ShareController],
-	providers: [ShareService],
-	exports: [ShareService],
+  imports: [TypeOrmModule.forFeature([Share, Article])],
+  controllers: [ShareController],
+  providers: [ShareService],
+  exports: [ShareService],
 })
-export class ShareModule { }
+export class ShareModule {}

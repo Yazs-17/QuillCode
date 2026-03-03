@@ -14,7 +14,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   canActivate(context: ExecutionContext) {
     // Check if single-user mode is enabled without password protection
-    const singleUserMode = this.configService.get<boolean>('app.singleUserMode');
+    const singleUserMode =
+      this.configService.get<boolean>('app.singleUserMode');
     const localPassword = this.configService.get<string>('app.localPassword');
 
     // In single-user mode without password, we still require JWT for API calls

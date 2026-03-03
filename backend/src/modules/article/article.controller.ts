@@ -37,10 +37,7 @@ export class ArticleController {
   }
 
   @Get(':id')
-  async findOne(
-    @Request() req: RequestWithUser,
-    @Param('id') id: string,
-  ) {
+  async findOne(@Request() req: RequestWithUser, @Param('id') id: string) {
     return this.articleService.findOne(id, req.user.id);
   }
 
@@ -54,10 +51,7 @@ export class ArticleController {
   }
 
   @Delete(':id')
-  async remove(
-    @Request() req: RequestWithUser,
-    @Param('id') id: string,
-  ) {
+  async remove(@Request() req: RequestWithUser, @Param('id') id: string) {
     await this.articleService.remove(id, req.user.id);
     return { message: 'Article deleted successfully' };
   }
