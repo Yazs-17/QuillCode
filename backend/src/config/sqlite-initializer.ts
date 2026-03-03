@@ -12,8 +12,10 @@ const logger = new Logger('SQLiteInitializer');
 export async function initializeSqliteDatabase(dbPath: string): Promise<void> {
   // Ensure directory exists
   const dbDir = path.dirname(dbPath);
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
+  try {
+    await fs.promises.access(dbDir);
+  } catch {
+    await fs.promises.mkdir(dbDir, { recursive: true });
     logger.log(`Created database directory: ${dbDir}`);
   }
 
@@ -39,7 +41,7 @@ export async function initializeSqliteDatabase(dbPath: string): Promise<void> {
     );
 
     if (fs.existsSync(initScriptPath)) {
-      const initScript = fs.readFileSync(initScriptPath, 'utf-8');
+      const initScript = await fs.promises.readFile(initScriptPath, 'utf-8');
 
       // Split by semicolons and execute each statement
       const statements = initScript
@@ -51,9 +53,10 @@ export async function initializeSqliteDatabase(dbPath: string): Promise<void> {
         try {
           db.exec(statement);
         } catch (error) {
+          const err = error as Error;
           // Ignore "already exists" errors for IF NOT EXISTS statements
-          if (!error.message.includes('already exists')) {
-            logger.warn(`Statement warning: ${error.message}`);
+          if (!err.message?.includes('already exists')) {
+            logger.warn(`Statement warning: ${err.message}`);
           }
         }
       }
