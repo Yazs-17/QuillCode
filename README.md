@@ -59,3 +59,9 @@ pnpm run dev
 ```
 
 前端应用: `http://localhost/login`。
+
+### 建议测试账户
+
+username: yazs
+email: `rand`
+password: yazs@admin.com
