@@ -39,7 +39,7 @@ export class Article {
   code: string;
 
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: ArticleType,
     default: ArticleType.SNIPPET,
   })

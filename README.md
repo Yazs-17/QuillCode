@@ -29,7 +29,7 @@ docker-compose down
 
 ### 方式二：本地开发模式
 
-需确保系统已安装 Node.js 及 pnpm 包管理器。
+需确保系统已安装 Node.js。
 
 #### 后端服务 (NestJS)
 
@@ -37,8 +37,8 @@ docker-compose down
 
 ```bash
 cd backend
-pnpm install
-pnpm run start:dev
+npm install
+npm run start:dev
 ```
 
 后端服务默认监听 3000 端口。
@@ -49,7 +49,7 @@ pnpm run start:dev
 
 ```bash
 cd frontend
-pnpm install
-pnpm run dev
+npm install
+npm run dev
 ```
 
