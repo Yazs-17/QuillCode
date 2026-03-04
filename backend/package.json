@@ -20,7 +20,6 @@
 		"test:e2e": "jest --config ./test/jest-e2e.json"
 	},
 	"dependencies": {
-		"@elastic/elasticsearch": "^8.19.1",
 		"@langchain/community": "^1.1.1",
 		"@langchain/core": "^1.1.8",
 		"@nestjs/common": "^11.0.1",
@@ -36,12 +35,13 @@
 		"class-validator": "^0.14.3",
 		"dockerode": "^4.0.9",
 		"langchain": "^1.2.3",
-		"mysql2": "^3.16.0",
 		"passport": "^0.7.0",
 		"passport-jwt": "^4.0.1",
 		"pg": "^8.16.3",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
+		"sqlite": "^5.1.1",
+		"sqlite3": "^5.1.7",
 		"typeorm": "^0.3.28",
 		"uuid": "^13.0.0"
 	},
