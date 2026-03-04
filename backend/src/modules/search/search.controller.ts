@@ -33,7 +33,7 @@ export class SearchController {
 	}
 
 	@Get('status')
-	@ApiOperation({ summary: '搜索服务状态', description: '检查 Elasticsearch 是否可用' })
+	@ApiOperation({ summary: '搜索服务状态', description: '检查 SQLite FTS5 是否可用' })
 	async status(): Promise<{ available: boolean }> {
 		return { available: this.searchService.isAvailable() };
 	}
@@ -41,7 +41,7 @@ export class SearchController {
 	@Get('reindex')
 	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth('JWT-auth')
-	@ApiOperation({ summary: '重建搜索索引', description: '重新索引当前用户的所有文章到 Elasticsearch' })
+	@ApiOperation({ summary: '重建搜索索引', description: '重新索引当前用户的所有文章到 SQLite FTS5' })
 	async reindex(@Request() req): Promise<{ message: string; count: number }> {
 		const count = await this.searchService.reindexUserArticles(req.user.id);
 		return { message: 'Reindex completed', count };

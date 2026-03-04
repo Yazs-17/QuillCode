@@ -28,7 +28,7 @@ export const features = {
 		: ['javascript', 'typescript', 'python', 'java'],
 
 	// Search & AI
-	elasticsearchSearch: true,         // Basic search (always available)
+	fts5Search: true,         // Basic search (always available)
 	ragRecommendation: isDevMode,      // Ollama-based RAG recommendations
 
 	// Other features

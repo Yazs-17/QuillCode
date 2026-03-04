@@ -42,7 +42,7 @@ export class ArticleService {
 
 		const fullArticle = await this.findOne(savedArticle.id, userId);
 
-		// Index in Elasticsearch
+		// Index in SQLite FTS5
 		await this.searchService.indexArticle(fullArticle);
 
 		return fullArticle;
@@ -114,7 +114,7 @@ export class ArticleService {
 
 		const updatedArticle = await this.findOne(id, userId);
 
-		// Update in Elasticsearch
+			// Update in SQLite FTS5
 		await this.searchService.indexArticle(updatedArticle);
 
 		return updatedArticle;
@@ -123,7 +123,7 @@ export class ArticleService {
 	async remove(id: string, userId: string): Promise<void> {
 		const article = await this.findOne(id, userId);
 
-		// Remove from Elasticsearch
+		// Remove from SQLite FTS5
 		await this.searchService.removeArticle(id);
 
 		// Remove shares first (they have foreign key to article)

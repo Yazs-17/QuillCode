@@ -2,21 +2,7 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Client } from '@elastic/elasticsearch';
 import { Article } from '../../entities';
-
-export interface ArticleDocument {
-	id: string;
-	title: string;
-	content: string;
-	code: string;
-	type: string;
-	language: string;
-	tags: string[];
-	userId: string;
-	createdAt: Date;
-	updatedAt: Date;
-}
 
 export interface SearchResult {
 	id: string;
@@ -36,118 +22,63 @@ export interface SearchResult {
 @Injectable()
 export class SearchService implements OnModuleInit {
 	private readonly logger = new Logger(SearchService.name);
-	private client: Client;
-	private indexName: string;
-	private isConnected = false;
+	private isConnected = true; // SQLite is local, considered always connected
 
 	constructor(
 		private configService: ConfigService,
 		@InjectRepository(Article)
 		private articleRepository: Repository<Article>,
-	) {
-		this.indexName = this.configService.get<string>('elasticsearch.index') || 'articles';
-	}
+	) {}
 
 	async onModuleInit() {
-		const node = this.configService.get<string>('elasticsearch.node');
-
-		this.client = new Client({ node });
-
-		await this.checkConnection();
-		if (this.isConnected) {
-			await this.createIndexIfNotExists();
-		}
-	}
-
-
-	private async checkConnection(): Promise<void> {
-		try {
-			await this.client.ping();
-			this.isConnected = true;
-			this.logger.log('Elasticsearch connected successfully');
-		} catch {
-			this.isConnected = false;
-			this.logger.warn('Elasticsearch not available, search features disabled');
-		}
+		await this.createIndexIfNotExists();
 	}
 
 	private async createIndexIfNotExists(): Promise<void> {
 		try {
-			const exists = await this.client.indices.exists({ index: this.indexName });
-
-			if (!exists) {
-				await this.client.indices.create({
-					index: this.indexName,
-					settings: {
-						analysis: {
-							analyzer: {
-								article_analyzer: {
-									type: 'custom',
-									tokenizer: 'standard',
-									filter: ['lowercase', 'stop'],
-								},
-							},
-						},
-					},
-					mappings: {
-						properties: {
-							id: { type: 'keyword' },
-							title: {
-								type: 'text',
-								analyzer: 'article_analyzer',
-								fields: { keyword: { type: 'keyword' } }
-							},
-							content: { type: 'text', analyzer: 'article_analyzer' },
-							code: { type: 'text', analyzer: 'article_analyzer' },
-							type: { type: 'keyword' },
-							language: { type: 'keyword' },
-							tags: { type: 'keyword' },
-							userId: { type: 'keyword' },
-							createdAt: { type: 'date' },
-							updatedAt: { type: 'date' },
-						},
-					},
-				});
-				this.logger.log(`Index "${this.indexName}" created`);
-			}
+			await this.articleRepository.query(`
+				CREATE VIRTUAL TABLE IF NOT EXISTS article_fts USING fts5(
+					id UNINDEXED,
+					title,
+					content,
+					code,
+					tags,
+					type UNINDEXED,
+					language UNINDEXED,
+					userId UNINDEXED,
+					tokenize='unicode61'
+				)
+			`);
+			this.logger.log('SQLite FTS5 virtual table "article_fts" ensured');
 		} catch (error) {
-			this.logger.error('Failed to create index', error);
+			this.logger.error('Failed to create SQLite FTS5 table', error);
+			this.isConnected = false;
 		}
 	}
 
-
 	async indexArticle(article: Article): Promise<void> {
-		if (!this.isConnected) {
-			this.logger.warn('Elasticsearch not connected, skipping index');
-			return;
-		}
+		if (!this.isConnected) return;
 
 		try {
-			const tags = article.articleTags?.map(at => at.tag?.name).filter(Boolean) || [];
+			const tags = article.articleTags?.map(at => at.tag?.name).filter(Boolean).join(' ') || '';
 
-			const document: ArticleDocument = {
-				id: article.id,
-				title: article.title,
-				content: article.content || '',
-				code: article.code || '',
-				type: article.type,
-				language: article.language,
-				tags: tags as string[],
-				userId: article.userId,
-				createdAt: article.createdAt,
-				updatedAt: article.updatedAt,
-			};
-
-			this.logger.log(`Indexing article: ${article.id} - ${article.title}`);
-
-			await this.client.index({
-				index: this.indexName,
-				id: article.id,
-				document,
-				refresh: true,
-			});
-
-			this.logger.log(`Article indexed successfully: ${article.id}`);
+			const queryRunner = this.articleRepository.manager.connection.createQueryRunner();
+			await queryRunner.connect();
+			await queryRunner.startTransaction();
+			try {
+				await queryRunner.query(`DELETE FROM article_fts WHERE id = ?`, [article.id]);
+				await queryRunner.query(
+					`INSERT INTO article_fts (id, title, content, code, tags, type, language, userId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+					[article.id, article.title, article.content || '', article.code || '', tags, article.type, article.language, article.userId]
+				);
+				await queryRunner.commitTransaction();
+				this.logger.log(`Article indexed successfully in FTS5: ${article.id}`);
+			} catch (err) {
+				await queryRunner.rollbackTransaction();
+				throw err;
+			} finally {
+				await queryRunner.release();
+			}
 		} catch (error) {
 			this.logger.error(`Failed to index article: ${article.id}`, error);
 		}
@@ -157,74 +88,66 @@ export class SearchService implements OnModuleInit {
 		if (!this.isConnected) return;
 
 		try {
-			await this.client.delete({
-				index: this.indexName,
-				id: articleId,
-				refresh: true,
-			});
-			this.logger.debug(`Article removed from index: ${articleId}`);
+			await this.articleRepository.query(`DELETE FROM article_fts WHERE id = ?`, [articleId]);
+			this.logger.debug(`Article removed from FTS5 index: ${articleId}`);
 		} catch (error) {
-			this.logger.error(`Failed to remove article from index: ${articleId}`, error);
+			this.logger.error(`Failed to remove article from FTS5 index: ${articleId}`, error);
 		}
 	}
 
-
 	async search(query: string, userId?: string): Promise<SearchResult[]> {
-		if (!this.isConnected) {
-			this.logger.warn('Elasticsearch not connected, returning empty results');
+		if (!this.isConnected || !query.trim()) {
 			return [];
 		}
 
 		try {
 			this.logger.log(`Searching for: "${query}" by user: ${userId}`);
 
-			const must: object[] = [
-				{
-					multi_match: {
-						query,
-						fields: ['title^3', 'content^2', 'code', 'tags^2'],
-						type: 'best_fields',
-						fuzziness: 'AUTO',
-					},
-				},
-			];
+			// Format query for SQLite FTS5: wrap in quotes to perform phrase search,
+			// or replace spaces with AND for term search.
+			// Simple approach: remove special FTS chars and replace spaces with asterisks
+			const safeQuery = query.replace(/['"]/g, '').trim().split(/\s+/).map(t => `"${t}"*`).join(' AND ');
 
+			const sqlParams: any[] = [safeQuery];
+			let userCondition = '';
 			if (userId) {
-				must.push({ term: { userId } });
+				userCondition = 'AND userId = ?';
+				sqlParams.push(userId);
 			}
 
-			const response = await this.client.search<ArticleDocument>({
-				index: this.indexName,
-				query: {
-					bool: { must },
-				},
-				highlight: {
-					fields: {
-						title: { number_of_fragments: 1 },
-						content: { number_of_fragments: 2, fragment_size: 150 },
-						code: { number_of_fragments: 1, fragment_size: 200 },
-					},
-					pre_tags: ['<mark>'],
-					post_tags: ['</mark>'],
-				},
-				size: 20,
-			});
+			const results = await this.articleRepository.query(`
+				SELECT 
+					id, 
+					title, 
+					content, 
+					type, 
+					language, 
+					tags,
+					highlight(article_fts, 1, '<mark>', '</mark>') as highlight_title,
+					snippet(article_fts, 2, '<mark>', '</mark>', '...', 15) as highlight_content,
+					snippet(article_fts, 3, '<mark>', '</mark>', '...', 15) as highlight_code,
+					rank as score
+				FROM article_fts
+				WHERE article_fts MATCH ? ${userCondition}
+				ORDER BY rank
+				LIMIT 20
+			`, sqlParams);
 
-			this.logger.log(`Search found ${response.hits.hits.length} results`);
+			this.logger.log(`Search found ${results.length} results`);
 
-			return response.hits.hits.map((hit) => ({
-				id: hit._source?.id || '',
-				title: hit._source?.title || '',
-				content: hit._source?.content || '',
-				type: hit._source?.type || '',
-				language: hit._source?.language || '',
-				tags: hit._source?.tags || [],
+			return results.map((row: any) => ({
+				id: row.id,
+				title: row.title,
+				content: row.content,
+				type: row.type,
+				language: row.language,
+				tags: row.tags ? row.tags.split(' ').filter(Boolean) : [],
 				highlights: {
-					title: hit.highlight?.title,
-					content: hit.highlight?.content,
-					code: hit.highlight?.code,
+					title: row.highlight_title ? [row.highlight_title] : undefined,
+					content: row.highlight_content ? [row.highlight_content] : undefined,
+					code: row.highlight_code ? [row.highlight_code] : undefined,
 				},
-				score: hit._score || 0,
+				score: -row.score, // SQLite rank is usually negative (more negative = better)
 			}));
 		} catch (error) {
 			this.logger.error('Search failed', error);
@@ -237,12 +160,9 @@ export class SearchService implements OnModuleInit {
 	}
 
 	async reindexUserArticles(userId: string): Promise<number> {
-		this.logger.log(`Starting reindex for user: ${userId}`);
+		this.logger.log(`Starting FTS5 reindex for user: ${userId}`);
 
-		if (!this.isConnected) {
-			this.logger.warn('Elasticsearch not connected, cannot reindex');
-			return 0;
-		}
+		if (!this.isConnected) return 0;
 
 		try {
 			this.logger.log(`Querying articles for user: ${userId}`);
@@ -254,14 +174,13 @@ export class SearchService implements OnModuleInit {
 			this.logger.log(`Found ${articles.length} articles for user ${userId}`);
 
 			for (const article of articles) {
-				this.logger.log(`Indexing article: ${article.id} - ${article.title}`);
 				await this.indexArticle(article);
 			}
 
 			this.logger.log(`Reindex completed: ${articles.length} articles indexed`);
 			return articles.length;
 		} catch (error) {
-			this.logger.error('Reindex failed', error);
+			this.logger.error('FTS5 Reindex failed', error);
 			return 0;
 		}
 	}

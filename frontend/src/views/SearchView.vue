@@ -12,11 +12,11 @@
 				</div>
 				<div v-if="!esAvailable" class="es-warning">
 					<span class="css-icon icon-warning warning-icon"></span>
-					Elasticsearch 未连接，搜索功能不可用
+					SQLite FTS5 未连接，搜索功能不可用
 				</div>
 				<div v-else class="es-status">
 					<span class="status-dot online"></span>
-					<span>Elasticsearch 已连接</span>
+					<span>SQLite FTS5 已连接</span>
 					<button class="reindex-btn" @click="handleReindex" :disabled="reindexing">
 						<span class="css-icon icon-refresh btn-icon"></span>
 						{{ reindexing ? '重建中...' : '重建索引' }}
