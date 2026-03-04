@@ -1,75 +1,61 @@
-[TOC]
+# 分支概述
 
-## 项目概述
+> 本分支（`on-prem`）主要用于完全本地化部署的方案，将来将会与 desktop-app 合并，并整理 native 方案。
 
-QuillCode 是一个面向程序员的在线代码笔记系统，旨在提供一个"随写、随存、随运行"的代码学习与管理环境。系统支持 Markdown 文档编写、多语言代码编辑与在线执行、标签分类管理、智能文章关联与推荐、文章分享与评论等功能。
-"Quill" 一词源自英文中的"羽毛笔"，象征着书写与创作。在 QuillCode 中，每一篇代码笔记都被称为一个 "Quill"，寓意用户用代码书写自己的技术成长之路。
+## 项目启动指南
 
+本项目提供了两种启动方式：**一键 Docker 部署**（推荐）和 **本地开发环境启动**（适用于开发者）。
 
-## Functions
+### 方式一：一键部署 (Docker 一步到位)
 
-1. 未来功能前瞻：
-   - 文件上传（包含教程markdown file、standard code file），markdown file 实时渲染
-   - add console 调试功能
-   - AI语义知识库加入，AI智能筛选
-   - 管理后台重做并独立出来
-	 - 强化AI推荐，优化es检索（考虑加入AI推荐流）
-   - Github发布形式
-     - 源码开源
-     - QuillCode 更加倾向于在线试用，对试用者（需要登录注册）可以下载软件（跳转到github releases 页面下载），开源软件，是一款 electron 软件
-		 - 这里需要加入对CI/CD的实践
-   
-2. 阶段性任务
-   
-   - 宣传一下自己做的小玩具
-   
-     
+前置条件：确保您的电脑上已安装并启动了 `Docker` 和 `Docker Compose`。
 
-
-
-## Some Tools
-
-Vue (frontend) & Nest.js (backend) & TypeROM
-
-## Start
+1. 在项目根目录，打开终端或命令行。
+2. 运行以下命令启动所有服务（包括数据库、Elasticsearch、Ollama 以及前后端服务）：
 
 ```bash
-# TODO
+docker-compose up -d
 ```
 
+3. 等待容器启动完成。服务启动后可以通过以下地址访问：
+   - 网页前端：`http://localhost:80` (或配置的网络端口)
+   - 后端 API：`http://localhost:3000`
 
+若需停止服务，请执行：`docker-compose down`
 
-## Self Deploy
+### 方式二：本地开发环境启动
 
-TODO
+前置环境准备：Node.js >= 18, `pnpm` 包管理器，以及配套的 MySQL 和 Elasticsearch 环境（可以通过单启 `docker-compose.yml` 中的基础设施）。
 
-## the last
+如需单独启动基础设施，可以运行：
+```bash
+docker-compose up -d mysql elasticsearch ollama
+```
 
-TODO
+#### 1. 启动后端 (NestJS)
 
+打开一个新的终端窗口：
 
-## To Start
+```bash
+cd backend
+# 安装依赖
+pnpm install
+# 启动开发服务器
+pnpm run start:dev
+```
 
-1. node 20.19.5
-2. docker pull elasticsearch:8.12.2
-   ```bash
-   docker run -d --name es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" elasticsearch:8.12.2
-   # 
-   docker start es
-   ```
-   
-   
-   
-3. ollama llama3:8b
+后端服务将运行在 `http://localhost:3000`。
 
-4. mysql 8.0.39,  执行database/init.sql, 定时任务可以采用 Windows 任务计划程序设置定时执行备份脚本 ()
+#### 2. 启动前端 (Vue 3 + Vite)
 
-5. nestjs, vue3,TypeORM 版本均在 package中给出 
+打开另一个终端窗口：
 
-6. 给某人管理员权限： 
-   ```sql
-   USE code_notebook;
-   UPDATE users SET role = 'admin' WHERE username = 'Yazs';
-   ```
+```bash
+cd frontend
+# 安装依赖
+pnpm install
+# 启动前端页面
+pnpm run dev
+```
 
-7. 
+前端应用通常运行在 `http://localhost:5173`。
