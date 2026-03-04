@@ -58,4 +58,4 @@ pnpm install
 pnpm run dev
 ```
 
-前端应用通常运行在 `http://localhost:5173`。
+前端应用: `http://localhost/login`。
