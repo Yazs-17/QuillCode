@@ -17,8 +17,8 @@ docker-compose up -d --build
 ```
 
 2. 容器启动完成后，各项服务映射的本地端口如下：
-- 前端交互界面：http://localhost:80
-- 后端 API 服务：http://localhost:3000
+- 前端交互界面：http://localhost:8080
+- 后端 API 服务：http://localhost:3001
 - Ollama AI 服务：http://localhost:11434
 
 3. 停止并释放容器环境：
@@ -53,4 +53,3 @@ pnpm install
 pnpm run dev
 ```
 
-构建成功后，可通过终端返回的局域网地址进行访问（通常为 http://localhost:5173）
