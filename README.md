@@ -2,6 +2,10 @@
 
 由于 MySQL 与 Elasticsearch 的架构对本地化部署存在过度设计，本分支(@on-prem)采用 SQLite 与 SQLite FTS5 进行了数据存储及搜索功能的重构，去除了多余的外部运行依赖。
 
+> [!important]
+> 由于pnpm软链接特性与sqlite方言特性，本repo branch只可使用 `npm`
+
+
 ## 启动指南
 
 本项目支持基于 Docker Compose 的容器化一键部署，或拆分前后端的本地独立开发模式。
