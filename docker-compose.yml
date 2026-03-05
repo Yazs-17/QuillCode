@@ -1,3 +1,5 @@
+name: quillcode-lean
+
 services:
   # Ollama AI
   ollama:
