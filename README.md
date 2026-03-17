@@ -6,7 +6,7 @@
 
 需要插入在线协作 websocket/diff online 等
 
-需要加入yazs flow
+需要加入yazs flow (note： 最终的plugin-sys 中加入)
 
 
 
